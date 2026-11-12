@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="css/planning-food.css" />
     <link rel="stylesheet" href="css/focus.css" />
     <link rel="stylesheet" href="css/gamification.css" />
+    <link rel="stylesheet" href="css/cloud-sync.css" />
   </head>
   <body>
     <div class="tools">
@@ -30,7 +31,9 @@
       ><span id="xpchip" class="xp-chip" title="Level & XP">⭐ Lv 1</span
       ><button id="ab" aria-label="Arrange room">✏️ Arrange</button
       ><button id="pb" aria-label="Change room picture">🖼 Room</button
-      ><button id="bk" aria-label="Backup and restore">💾 Backup</button>
+      ><button id="bk" aria-label="Backup and restore">💾 Backup</button
+      ><button id="sync-account" aria-label="Sign in to sync your data">☁️ Sync</button
+      ><span id="sync-status" class="sync-status" role="status" aria-live="polite">Local only</span>
     </div>
     <header>
       <h1>my wonderland room</h1>
@@ -181,6 +184,9 @@
         <div id="body"></div>
       </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/core.js"></script>
     <script src="js/journal.js"></script>
@@ -196,5 +202,6 @@
     <script src="js/backup.js"></script>
     <script src="js/room-layout.js"></script>
     <script src="js/startup.js"></script>
+    <script src="js/cloud-sync.js"></script>
   </body>
 </html>

@@ -24,6 +24,17 @@
           } catch (e) {
             if (mem) S = mem;
           }
+          try {
+            var visionItems = JSON.parse(
+              localStorage.getItem("cozyroom_vb") || "null",
+            );
+            if (Array.isArray(visionItems) && visionItems.length) {
+              S.mf = S.mf || {};
+              if (!Array.isArray(S.mf.vision)) S.mf.vision = visionItems;
+            }
+          } catch (e) {
+            console.error("Could not migrate local vision board data.", e);
+          }
           norm();
         }
         function save() {
@@ -32,6 +43,7 @@
           try {
             localStorage.setItem("cozyroom", JSON.stringify(S));
           } catch (e) {}
+          if (window.queueCloudSave) window.queueCloudSave();
         }
         function esc(t) {
           return String(t).replace(/[&<>"]/g, function (c) {

@@ -12,6 +12,8 @@
         function vbSave() {
           try {
             localStorage.setItem(VBK, JSON.stringify(VB));
+            S.mf.vision = VB;
+            save();
             return true;
           } catch (e) {
             return false;
@@ -20,6 +22,8 @@
         function manifest() {
           var M = S.mf,
             td = dstr();
+          if (Array.isArray(M.vision)) VB = M.vision;
+          else M.vision = VB;
           var dayKey = (mt === "planner" && md) ? md : td;
           M.days = M.days || {};
           var Day = M.days[dayKey] || (M.days[dayKey] = {
