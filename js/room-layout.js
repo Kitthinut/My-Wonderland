@@ -1,13 +1,18 @@
         var sc = $("#scene"),
           stg = $("#stage");
         function fit() {
-          var k = sc.clientWidth / 980;
+          var tools = sc.querySelector(".tools"),
+            top = tools ? tools.offsetHeight : 0,
+            availableHeight = Math.max(0, sc.clientHeight - top),
+            k = Math.min(sc.clientWidth / 980, availableHeight / SH);
+          stg.style.left = Math.max(0, (sc.clientWidth - 980 * k) / 2) + "px";
+          stg.style.top = top + "px";
           stg.style.transform = "scale(" + k + ")";
           sc.style.setProperty("--k", k);
-          sc.style.height = SH * k + "px";
           stg.style.height = SH + "px";
         }
         window.addEventListener("resize", fit);
+        window.requestAnimationFrame(fit);
         window.addEventListener("orientationchange", function () {
           window.requestAnimationFrame(fit);
         });

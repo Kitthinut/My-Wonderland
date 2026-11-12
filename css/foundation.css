@@ -80,18 +80,33 @@
 }
 
 html {
+  height: 100%;
   scroll-padding-top: env(safe-area-inset-top, 0px);
   background: var(--wall);
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   background: var(--wall);
   color: var(--ink);
   font-family: "Quicksand", "Nunito", "Trebuchet MS", system-ui, sans-serif;
   display: flex;
   flex-direction: column;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 h1,
@@ -222,20 +237,23 @@ header p {
 }
 
 .later {
-  text-align: center;
-  color: var(--soft);
-  font-size: 0.85rem;
-  padding: 8px 12px 14px;
-  margin: 0;
+  display: none;
 }
 
 .tools {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px 12px 0;
+  padding: 8px 12px;
+  background: var(--wall);
+  border-bottom: 1px solid var(--line);
 }
 
 .tools button {
@@ -270,6 +288,65 @@ textarea {
   border-radius: 8px;
   padding: 6px 8px;
   max-width: 100%;
+}
+
+.number-control {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.number-control-full {
+  display: flex;
+  width: 100%;
+}
+
+.number-control > input[type="number"] {
+  min-width: 0;
+  flex: 1 1 auto;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  -moz-appearance: textfield;
+}
+
+.number-control > input[type="number"]::-webkit-inner-spin-button,
+.number-control > input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.number-stepper {
+  display: flex;
+  flex: 0 0 44px;
+  flex-direction: column;
+}
+
+.number-stepper button {
+  flex: 1 1 50%;
+  min-height: 28px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--line);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  touch-action: manipulation;
+}
+
+.number-stepper button:first-child {
+  border-radius: 0 8px 0 0;
+  border-bottom-width: 1px;
+}
+
+.number-stepper button:last-child {
+  border-radius: 0 0 8px 0;
+  border-top-width: 1px;
+}
+
+.number-stepper button:active {
+  background: var(--wall2);
 }
 
 textarea {
@@ -395,6 +472,16 @@ textarea {
 @media (max-width: 700px) {
   .room {
     grid-template-columns: 1fr;
+  }
+
+  .tools {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .tools button {
+    padding: 4px 7px;
+    font-size: 0.85rem;
   }
 
   .sheet {

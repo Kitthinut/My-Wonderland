@@ -544,6 +544,77 @@
         function openM() {
           $("#ov").hidden = false;
         }
+        function addNumberStepper(input) {
+          if (input.hasAttribute("data-number-stepper")) return;
+          input.setAttribute("data-number-stepper", "");
+
+          var control = document.createElement("span"),
+            stepper = document.createElement("span"),
+            up = document.createElement("button"),
+            down = document.createElement("button"),
+            fullWidth = input.style.width === "100%";
+          control.className = "number-control";
+          if (fullWidth) {
+            control.classList.add("number-control-full");
+            input.style.width = "auto";
+          }
+          stepper.className = "number-stepper";
+          up.type = down.type = "button";
+          up.className = "number-step-up";
+          down.className = "number-step-down";
+          up.setAttribute("aria-label", "Increase value");
+          down.setAttribute("aria-label", "Decrease value");
+          up.textContent = "↑";
+          down.textContent = "↓";
+          input.parentNode.insertBefore(control, input);
+          control.appendChild(input);
+          control.appendChild(stepper);
+          stepper.appendChild(up);
+          stepper.appendChild(down);
+        }
+        function enhanceNumberSteppers(root) {
+          if (!root || root.nodeType !== 1) return;
+          if (root.matches('input[type="number"]')) addNumberStepper(root);
+          var inputs = root.querySelectorAll('input[type="number"]');
+          for (var i = 0; i < inputs.length; i++) {
+            addNumberStepper(inputs[i]);
+          }
+        }
+        enhanceNumberSteppers(document.body);
+        new MutationObserver(function (records) {
+          for (var i = 0; i < records.length; i++) {
+            var nodes = records[i].addedNodes;
+            for (var j = 0; j < nodes.length; j++) {
+              enhanceNumberSteppers(nodes[j]);
+            }
+          }
+        }).observe(document.body, { childList: true, subtree: true });
+        document.addEventListener("click", function (event) {
+          var button =
+            event.target.closest &&
+            event.target.closest(".number-stepper button");
+          if (!button) return;
+          var control = button.closest(".number-control"),
+            input = control && control.querySelector('input[type="number"]');
+          if (!input || input.disabled || input.readOnly) return;
+          event.preventDefault();
+
+          var step = input.step === "any" ? 1 : Number(input.step),
+            min = input.min === "" ? null : Number(input.min),
+            max = input.max === "" ? null : Number(input.max),
+            direction = button.classList.contains("number-step-up") ? 1 : -1,
+            current =
+              input.value === "" ? (min === null ? 0 : min) : input.valueAsNumber;
+          if (!isFinite(step) || step <= 0) step = 1;
+          if (!isFinite(current)) current = 0;
+          var next = current + direction * step;
+          if (min !== null && isFinite(min)) next = Math.max(min, next);
+          if (max !== null && isFinite(max)) next = Math.min(max, next);
+          if (next === current) return;
+          input.value = String(Number(next.toFixed(10)));
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        });
         function closeM() {
           $("#ov").hidden = true;
           $("#body").innerHTML = "";

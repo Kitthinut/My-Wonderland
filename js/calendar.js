@@ -14,12 +14,28 @@
             p2(n.getDate())
           );
         }
+        function googleCalendarEmbed(value) {
+          try {
+            var url = new URL((value || "").trim());
+            if (
+              url.protocol !== "https:" ||
+              url.hostname.toLowerCase() !== "calendar.google.com" ||
+              !/^\/calendar\/(?:u\/\d+\/)?embed\/?$/.test(url.pathname)
+            ) {
+              return "";
+            }
+            return url.href;
+          } catch (error) {
+            return "";
+          }
+        }
         function calendar() {
           var y = CV.y,
             m = CV.m,
             td = dstr(),
             pm = {},
-            main = S.main.cal || "https://calendar.google.com/";
+            main = S.main.cal || "https://calendar.google.com/",
+            embedURL = googleCalendarEmbed(S.main.calEmbed);
           S.prints.forEach(function (p) {
             pm[p.date] = (pm[p.date] || 0) + 1;
           });
@@ -42,7 +58,15 @@
             esc(main) +
             '">Open Google Calendar</a></div><details class="calendar-settings"><summary class="muted">Change calendar link</summary><div class="bar" style="margin-top:8px"><input id="cl" placeholder="Paste your calendar link" value="' +
             esc(S.main.cal || "") +
-            '" style="flex:1"><button class="btn" id="cls">Save</button></div></details><p class="muted calendar-help">Plans live here. Finished pomodoros show as ⏱ (only when the timer truly reaches zero — reset or switch cancels). Post-its show as ✨.</p><div class="cal" style="max-width:560px">';
+            '" style="flex:1"><button class="btn" id="cls">Save</button></div></details>' +
+            (embedURL
+              ? '<details class="calendar-embed"><summary>Show Google Calendar in Wonderland</summary><div class="google-calendar-frame"><iframe src="' +
+                esc(embedURL) +
+                '" title="Google Calendar" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div></details>'
+              : "") +
+            '<details class="calendar-settings calendar-embed-settings"><summary class="muted">Set up an in-app Google Calendar</summary><p class="muted">Paste the calendar embed URL from Google Calendar settings (the src URL from its embed code). Public calendars work most reliably; private calendars may require you to be signed in to Google in this browser.</p><div class="bar" style="margin-top:8px"><input id="ce" placeholder="https://calendar.google.com/calendar/embed?src=…" value="' +
+            esc(S.main.calEmbed || "") +
+            '" style="flex:1;min-width:0"><button class="btn" id="ces">Save view</button><button class="btn ghost" id="cec">Clear</button></div><p class="calendar-embed-error" id="ce-error" role="status"></p></details><p class="muted calendar-help">Plans live here. Finished pomodoros show as ⏱ (only when the timer truly reaches zero — reset or switch cancels). Post-its show as ✨.</p><div class="cal" style="max-width:560px">';
           "SMTWTFS".split("").forEach(function (c) {
             h += "<b>" + c + "</b>";
           });
@@ -125,6 +149,23 @@
           };
           $("#cls").onclick = function () {
             S.main.cal = fixu($("#cl").value);
+            save();
+            calendar();
+          };
+          $("#ces").onclick = function () {
+            var value = $("#ce").value.trim(),
+              url = googleCalendarEmbed(value);
+            if (!url) {
+              $("#ce-error").textContent =
+                "Enter a valid HTTPS Google Calendar embed URL.";
+              return;
+            }
+            S.main.calEmbed = url;
+            save();
+            calendar();
+          };
+          $("#cec").onclick = function () {
+            delete S.main.calEmbed;
             save();
             calendar();
           };

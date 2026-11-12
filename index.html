@@ -16,6 +16,12 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icon.svg" />
     <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Quicksand:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/foundation.css" />
     <link rel="stylesheet" href="css/room-scene.css" />
     <link rel="stylesheet" href="css/habits.css" />
@@ -26,21 +32,21 @@
     <link rel="stylesheet" href="css/cloud-sync.css" />
   </head>
   <body>
-    <div class="tools">
-      <button id="th" aria-label="Toggle dark mode" title="Toggle dark / light">🌙</button
-      ><span id="xpchip" class="xp-chip" title="Level & XP">⭐ Lv 1</span
-      ><button id="ab" aria-label="Arrange room">✏️ Arrange</button
-      ><button id="pb" aria-label="Change room picture">🖼 Room</button
-      ><button id="bk" aria-label="Backup and restore">💾 Backup</button
-      ><button id="install-app" aria-label="Install Wonderland">📲 Install</button
-      ><button id="sync-account" aria-label="Sign in to sync your data">☁️ Sync</button
-      ><span id="sync-status" class="sync-status" role="status" aria-live="polite">Local only</span>
-    </div>
-    <header>
+    <header class="sr-only">
       <h1>my wonderland room</h1>
       <p>tap anything in the room to open it ✨</p>
     </header>
     <main class="scene" id="scene">
+      <div class="tools">
+        <button id="th" aria-label="Toggle dark mode" title="Toggle dark / light">🌙</button
+        ><span id="xpchip" class="xp-chip" title="Level & XP">⭐ Lv 1</span
+        ><button id="ab" aria-label="Arrange room">✏️ Arrange</button
+        ><button id="pb" aria-label="Change room picture">🖼 Room</button
+        ><button id="bk" aria-label="Backup and restore">💾 Backup</button
+        ><button id="install-app" aria-label="Install Wonderland">📲 Install</button
+        ><button id="sync-account" aria-label="Sign in to sync your data">☁️ Sync</button
+        ><span id="sync-status" class="sync-status" role="status" aria-live="polite">Local only</span>
+      </div>
       <div class="stage" id="stage">
         <img id="bgimg" alt="" />
         <div class="wall"></div>

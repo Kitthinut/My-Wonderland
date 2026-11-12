@@ -7,8 +7,8 @@
   min-width: 0;
 }
 
-.calendar-controls input[type="number"] {
-  flex: 0 1 90px;
+.calendar-controls .number-control {
+  flex: 0 1 134px;
 }
 
 .calendar-controls .btn {
