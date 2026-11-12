@@ -13,10 +13,9 @@
     <meta name="apple-mobile-web-app-title" content="Wonderland Room" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="description" content="My cozy Wonderland room – journal, habits, planner & more" />
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="icon-192.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icon.svg" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
     <link rel="stylesheet" href="css/foundation.css" />
     <link rel="stylesheet" href="css/room-scene.css" />
     <link rel="stylesheet" href="css/habits.css" />
@@ -33,6 +32,7 @@
       ><button id="ab" aria-label="Arrange room">✏️ Arrange</button
       ><button id="pb" aria-label="Change room picture">🖼 Room</button
       ><button id="bk" aria-label="Backup and restore">💾 Backup</button
+      ><button id="install-app" aria-label="Install Wonderland">📲 Install</button
       ><button id="sync-account" aria-label="Sign in to sync your data">☁️ Sync</button
       ><span id="sync-status" class="sync-status" role="status" aria-live="polite">Local only</span>
     </div>
@@ -172,7 +172,7 @@
         </button>
       </div>
     </main>
-    <p class="later">all corners are open · tap anything in the room 🌷 · works on phone & iPad too</p>
+    <p class="later">all corners are open · tap anything in the room 🌷 · rotate your phone for a wider room view</p>
 
     <div id="eb" hidden>
       <span>Drag a zone to move it, drag its pink corner to resize.</span

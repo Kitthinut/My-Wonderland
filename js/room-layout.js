@@ -8,6 +8,9 @@
           stg.style.height = SH + "px";
         }
         window.addEventListener("resize", fit);
+        window.addEventListener("orientationchange", function () {
+          window.requestAnimationFrame(fit);
+        });
         var BGK = "cozyroom_bg",
           bg = null,
           SH = 600,

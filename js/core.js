@@ -88,11 +88,19 @@
         function stats(y, m) {
           var M = getM(y, m),
             d = dim(y, m),
+            current = new Date(),
+            future = y > current.getFullYear() ||
+              (y === current.getFullYear() && m > current.getMonth() + 1),
+            elapsed = future
+              ? 0
+              : y === current.getFullYear() && m === current.getMonth() + 1
+                ? current.getDate()
+                : d,
             h = M.habits.length,
             tot = 0,
             daily = [],
             per = [];
-          for (var i = 1; i <= d; i++) {
+          for (var i = 1; i <= elapsed; i++) {
             var c = 0;
             M.habits.forEach(function (x) {
               if ((M.checks[x.id] || []).indexOf(i) > -1) c++;
@@ -101,16 +109,24 @@
             daily.push(h ? Math.round((c / h) * 100) : 0);
           }
           M.habits.forEach(function (x) {
+            var completed = 0,
+              checks = M.checks[x.id] || [];
+            for (var day = 1; day <= elapsed; day++) {
+              if (checks.indexOf(day) > -1) completed++;
+            }
             per.push({
               name: x.name,
-              p: Math.round(((M.checks[x.id] || []).length / d) * 100),
+              done: completed,
+              total: elapsed,
+              p: elapsed ? Math.round((completed / elapsed) * 100) : 0,
             });
           });
           return {
-            pct: h ? Math.round((tot / (h * d)) * 100) : 0,
+            pct: h && elapsed ? Math.round((tot / (h * elapsed)) * 100) : 0,
             daily: daily,
             per: per,
             d: d,
+            elapsed: elapsed,
           };
         }
         function streakFor(checks, y, m) {

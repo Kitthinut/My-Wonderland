@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "My Wonderland Room",
+  "short_name": "Wonderland",
+  "description": "A cozy personal space for habits, journaling, planning, and more.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFF2F2",
+  "theme_color": "#FFF2F2",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

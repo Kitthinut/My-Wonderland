@@ -167,8 +167,46 @@
         fit();
         if (bg) mode();
         else applyLy();
+        var installPrompt = null,
+          installButton = document.getElementById("install-app");
+        window.addEventListener("beforeinstallprompt", function (event) {
+          event.preventDefault();
+          installPrompt = event;
+        });
+        window.addEventListener("appinstalled", function () {
+          installPrompt = null;
+        });
+        installButton.onclick = function () {
+          if (
+            window.matchMedia("(display-mode: standalone)").matches ||
+            navigator.standalone
+          ) {
+            window.alert("My Wonderland is already installed.");
+            return;
+          }
+          if (installPrompt) {
+            installPrompt.prompt();
+            installPrompt.userChoice
+              .then(function (choice) {
+                installPrompt = null;
+                if (choice.outcome === "accepted") {
+                  window.alert("My Wonderland is installing.");
+                }
+              })
+              .catch(function (error) {
+                console.error("Could not start app installation.", error);
+                window.alert("The install prompt could not be opened. Try your browser menu.");
+              });
+            return;
+          }
+          window.alert(
+            "To install, open this app from its HTTPS website (not a local file). On iPhone, use Safari Share > Add to Home Screen. On Android, use Chrome's menu > Install app or Add to Home screen.",
+          );
+        };
         if ("serviceWorker" in navigator) {
           window.addEventListener("load", function () {
-            navigator.serviceWorker.register("./sw.js").catch(function () {});
+            navigator.serviceWorker.register("./sw.js").catch(function (error) {
+              console.error("Could not register the offline app worker.", error);
+            });
           });
         }

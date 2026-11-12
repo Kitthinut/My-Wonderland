@@ -286,6 +286,20 @@ textarea {
   margin: 10px 0;
 }
 
+.pbar {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.pbar > div {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.2s ease;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;

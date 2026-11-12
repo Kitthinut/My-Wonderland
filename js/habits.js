@@ -77,7 +77,7 @@
               }
             });
             svg += '<text x="'+cx+'" y="'+(cy-6)+'" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">'+st.pct+'%</text>';
-            svg += '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="11" fill="var(--soft)">this month</text>';
+            svg += '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="11" fill="var(--soft)">avg. daily</text>';
             svg += '</svg>';
 
             var xp = totalXP(V.y, V.m);
@@ -89,7 +89,7 @@
             h += '<div class="game-lvl"><span class="game-badge">'+badge.emoji+'</span> <b>Lv '+lv.level+'</b> <span class="muted">'+badge.label+'</span></div>';
             h += '<div class="game-xp"><div class="pbar" style="flex:1"><div style="width:'+Math.min(100, Math.round(lv.xpInto/lv.xpNeed*100))+'%"></div></div>';
             h += '<span class="muted" style="font-size:0.75rem;white-space:nowrap">'+lv.xpInto+' / '+lv.xpNeed+' XP</span></div>';
-            h += '<div class="game-stats"><span>🔥 '+best+' day streak</span><span>⭐ '+xp+' XP</span><span>'+st.pct+'% done</span></div>';
+            h += '<div class="game-stats"><span>🔥 '+best+' day streak</span><span>⭐ '+xp+' XP</span><span>'+st.pct+'% avg. daily</span></div>';
             h += '</div>';
 
             h += '<div class="hab-layout">';
@@ -104,14 +104,21 @@
               var col = colors[hi % colors.length];
               var checks = M.checks[x.id] || [];
               var doneToday = isNow && checks.indexOf(today) > -1;
-              var count = checks.length;
+              var count = 0;
+              for (var checkedDay = 1; checkedDay <= st.elapsed; checkedDay++) {
+                if (checks.indexOf(checkedDay) > -1) count++;
+              }
               var streak = streakFor(checks, V.y, V.m);
               h += '<div class="hab-row" style="border-left:4px solid '+col+'">';
               h += '<div style="flex:1;min-width:0">';
               h += '<input value="'+esc(x.name)+'" data-r="'+x.id+'" style="width:100%;padding:4px 6px;font-weight:600">';
-              h += '<small class="muted">'+count+' / '+days+' days';
+              h += '<small class="muted">'+(st.elapsed ? count+' / '+st.elapsed+' days' : 'No days elapsed');
               if (streak > 0) h += ' · <span style="color:var(--pink)">🔥 '+streak+'</span>';
               h += '</small></div>';
+              h += '<div class="hab-order" aria-label="Reorder '+esc(x.name)+'">';
+              h += '<button type="button" data-move="'+x.id+'" data-direction="-1" aria-label="Move '+esc(x.name)+' up" title="Move up"'+(hi === 0 ? ' disabled' : '')+'>↑</button>';
+              h += '<button type="button" data-move="'+x.id+'" data-direction="1" aria-label="Move '+esc(x.name)+' down" title="Move down"'+(hi === M.habits.length - 1 ? ' disabled' : '')+'>↓</button>';
+              h += '</div>';
               if (isNow) {
                 h += '<button class="c'+(doneToday?' on':'')+'" data-h="'+x.id+'" data-d="'+today+'" aria-label="Mark '+esc(x.name)+' for today" style="width:38px;height:38px;flex-shrink:0;border-radius:50%;background:'+(doneToday?col:'#fff')+';border:3px solid '+col+'"></button>';
               }
@@ -120,7 +127,7 @@
             });
 
             h += '<div class="bar" style="margin-top:12px"><input id="nh" placeholder="New habit name" style="flex:1"><button class="btn" id="ah">Add</button></div>';
-            h += '<p class="muted" style="font-size:0.75rem;margin-top:8px">Tap the circle on the right to mark today. Past days stay on the ring. Earn XP & keep streaks going!</p>';
+            h += '<p class="muted" style="font-size:0.75rem;margin-top:8px">Use ↑/↓ to reorder habits. Tap the circle to mark today; past days stay on the ring. Earn XP & keep streaks going!</p>';
             h += '</div></div>';
           }
           if (tab === "todo") {
@@ -147,7 +154,7 @@
             });
           }
           if (tab === "graph") {
-            var w = Math.max(st.d * 18 + 30, 300),
+            var w = Math.max(st.daily.length * 18 + 30, 300),
               g =
                 '<svg viewBox="0 0 ' +
                 w +
@@ -185,16 +192,16 @@
             });
             g += "</svg>";
             h +=
-              '<p><b>Daily completion, %</b></p><div class="wrap">' +
+              '<p><b>Daily completion (% of habits checked)</b></p><div class="wrap">' +
               g +
-              "</div><p><b>Each habit this month</b></p>";
+              "</div><p><b>Each habit this month"+(st.elapsed === 0 ? " (not started)" : st.elapsed < st.d ? " (through day "+st.elapsed+")" : "")+"</b></p>";
             st.per.forEach(function (x) {
               h +=
                 '<div style="margin:8px 0">' +
                 esc(x.name) +
                 ' <span class="muted">' +
                 x.p +
-                '%</span><div class="pbar"><div style="width:' +
+                '% · '+x.done+'/'+x.total+' days</span><div class="pbar"><div style="width:' +
                 x.p +
                 '%;background:var(--sage)"></div></div></div>';
             });
@@ -232,6 +239,19 @@
           document.querySelectorAll(".tabs button").forEach(function (b) {
             b.onclick = function () {
               tab = b.dataset.t;
+              board();
+            };
+          });
+          document.querySelectorAll("[data-move]").forEach(function (b) {
+            b.onclick = function () {
+              var index = M.habits.findIndex(function (habit) {
+                return habit.id === b.dataset.move;
+              });
+              var target = index + Number(b.dataset.direction);
+              if (index < 0 || target < 0 || target >= M.habits.length) return;
+              var moved = M.habits.splice(index, 1)[0];
+              M.habits.splice(target, 0, moved);
+              save();
               board();
             };
           });
