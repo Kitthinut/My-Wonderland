@@ -19,6 +19,7 @@
             s8: ".wcal",
             s9: ".mb",
             s10: ".teapot-spot",
+            s11: ".bed-spot",
           };
           IDS.forEach(function (id) {
             var el = $(Q[id]);
