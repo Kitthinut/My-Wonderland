@@ -172,6 +172,11 @@
         color: #fff;
         border-color: var(--ink);
       }
+      .task-card-edit input,
+      .task-card-edit select {
+        width: 100%;
+        min-width: 0;
+      }
       .task-new {
         border: 2px dashed var(--line);
         border-radius: 14px;

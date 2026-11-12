@@ -66,6 +66,9 @@
           openM();
           wonder();
         };
+        $("#s11").onclick = function () {
+          $("#sync-account").click();
+        };
         $("#s9").onclick = function () {
           openM();
           money();

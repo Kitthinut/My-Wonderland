@@ -1,3 +1,4 @@
+        var editingTodoId = null;
         function board() {
           var M = getM(V.y, V.m),
             st = stats(V.y, V.m);
@@ -80,7 +81,7 @@
             svg += '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="11" fill="var(--soft)">avg. daily</text>';
             svg += '</svg>';
 
-            var xp = totalXP(V.y, V.m);
+            var xp = totalAllXP();
             var lv = levelFromXP(xp);
             var best = bestStreak(V.y, V.m);
             var badge = badgeFor(best, st.pct);
@@ -89,7 +90,7 @@
             h += '<div class="game-lvl"><span class="game-badge">'+badge.emoji+'</span> <b>Lv '+lv.level+'</b> <span class="muted">'+badge.label+'</span></div>';
             h += '<div class="game-xp"><div class="pbar" style="flex:1"><div style="width:'+Math.min(100, Math.round(lv.xpInto/lv.xpNeed*100))+'%"></div></div>';
             h += '<span class="muted" style="font-size:0.75rem;white-space:nowrap">'+lv.xpInto+' / '+lv.xpNeed+' XP</span></div>';
-            h += '<div class="game-stats"><span>🔥 '+best+' day streak</span><span>⭐ '+xp+' XP</span><span>'+st.pct+'% avg. daily</span></div>';
+            h += '<div class="game-stats"><span>🔥 '+best+' day streak</span><span>⭐ '+xp+' all-time XP</span><span>'+st.pct+'% avg. daily</span></div>';
             h += '</div>';
 
             h += '<div class="hab-layout">';
@@ -146,9 +147,27 @@
                 t.id +
                 '"' +
                 (t.d ? " checked" : "") +
-                '><span style="flex:1">' +
-                esc(t.t) +
-                '</span><button data-dt="' +
+                '>';
+              if (editingTodoId === t.id) {
+                h +=
+                  '<input data-todo-value="' +
+                  t.id +
+                  '" value="' +
+                  esc(t.t) +
+                  '" aria-label="Edit to-do" style="flex:1;min-width:0"><button class="btn" data-todo-save="' +
+                  t.id +
+                  '">Save</button><button class="btn ghost" data-todo-cancel="' +
+                  t.id +
+                  '">Cancel</button>';
+              } else {
+                h +=
+                  '<span style="flex:1">' +
+                  esc(t.t) +
+                  '</span><button class="btn ghost" data-todo-edit="' +
+                  t.id +
+                  '">Edit</button>';
+              }
+              h += '<button data-dt="' +
                 t.id +
                 '" aria-label="Delete" style="background:none;border:0">✕</button></div>';
             });
@@ -226,12 +245,14 @@
           }
           $("#body").innerHTML = h;
           $("#mm").onchange = function () {
+            editingTodoId = null;
             V.m = +this.value;
             board();
           };
           $("#yy").onchange = function () {
             var v = +this.value;
             if (v > 1900 && v < 3000) {
+              editingTodoId = null;
               V.y = v;
               board();
             }
@@ -239,6 +260,7 @@
           document.querySelectorAll(".tabs button").forEach(function (b) {
             b.onclick = function () {
               tab = b.dataset.t;
+              if (tab !== "todo") editingTodoId = null;
               board();
             };
           });
@@ -336,10 +358,62 @@
           });
           document.querySelectorAll("[data-dt]").forEach(function (b) {
             b.onclick = function () {
+              if (editingTodoId === b.dataset.dt) editingTodoId = null;
               M.todos = M.todos.filter(function (x) {
                 return x.id !== b.dataset.dt;
               });
               save();
+              board();
+            };
+          });
+          document.querySelectorAll("[data-todo-edit]").forEach(function (b) {
+            b.onclick = function () {
+              editingTodoId = b.dataset.todoEdit;
+              board();
+              var input = document.querySelector(
+                '[data-todo-value="' + editingTodoId + '"]',
+              );
+              if (input) input.focus();
+            };
+          });
+          document.querySelectorAll("[data-todo-save]").forEach(function (b) {
+            b.onclick = function () {
+              var t = M.todos.filter(function (x) {
+                  return x.id === b.dataset.todoSave;
+                })[0],
+                input = document.querySelector(
+                  '[data-todo-value="' + b.dataset.todoSave + '"]',
+                ),
+                value = input ? input.value.trim() : "";
+              if (!t || !value) {
+                if (input) input.focus();
+                if (typeof toastMsg === "function") {
+                  toastMsg("A to-do needs a name.");
+                }
+                return;
+              }
+              t.t = value;
+              editingTodoId = null;
+              save();
+              board();
+            };
+          });
+          document.querySelectorAll("[data-todo-value]").forEach(function (input) {
+            input.onkeydown = function (e) {
+              if (e.key === "Enter" || e.key === "Escape") {
+                e.preventDefault();
+                var button = document.querySelector(
+                  e.key === "Enter"
+                    ? '[data-todo-save="' + input.dataset.todoValue + '"]'
+                    : '[data-todo-cancel="' + input.dataset.todoValue + '"]',
+                );
+                if (button) button.click();
+              }
+            };
+          });
+          document.querySelectorAll("[data-todo-cancel]").forEach(function (b) {
+            b.onclick = function () {
+              editingTodoId = null;
               board();
             };
           });

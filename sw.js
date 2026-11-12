@@ -1,4 +1,4 @@
-var CACHE_NAME = "wonderland-shell-v5";
+var CACHE_NAME = "wonderland-shell-v7";
 var APP_FILES = [
   "./",
   "./index.html",

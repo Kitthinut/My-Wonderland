@@ -1,3 +1,4 @@
+        var editingTaskId = null;
         function computer() {
           var td = dstr();
           var P = pomoDay(td);
@@ -120,6 +121,19 @@
               else if (du <= 3) { dueTxt = "🔥 " + du + " day(s) to go"; dueCls = "soon"; }
               else { dueTxt = "📅 " + du + " days to go"; dueCls = "ok"; }
               var pri = tk.q || "Q2";
+              if (editingTaskId === tk.id) {
+                h += '<div class="task-card task-card-edit">';
+                h += '<input id="edit-task-title" aria-label="Task title" value="'+esc(tk.t)+'" placeholder="Task title">';
+                h += '<select id="edit-task-priority" aria-label="Priority">';
+                h += '<option value="Q1"'+(pri==="Q1"?' selected':'')+'>Q1 · Do First</option>';
+                h += '<option value="Q2"'+(pri==="Q2"?' selected':'')+'>Q2 · Schedule</option>';
+                h += '<option value="Q3"'+(pri==="Q3"?' selected':'')+'>Q3 · Delegate</option>';
+                h += '<option value="Q4"'+(pri==="Q4"?' selected':'')+'>Q4 · Later</option></select>';
+                h += '<input id="edit-task-due" type="date" aria-label="Due date" value="'+esc(tk.due||"")+'">';
+                h += '<input id="edit-task-tag" aria-label="Tag" value="'+esc(tk.tag||"")+'" placeholder="Tag">';
+                h += '<div class="t-acts"><button data-tsave="'+tk.id+'">Save</button><button data-tcancel>Cancel</button></div></div>';
+                return;
+              }
               var priL = pri === "Q1" ? "Q1 · Do First" : pri === "Q2" ? "Q2 · Schedule" : pri === "Q3" ? "Q3 · Delegate" : "Q4 · Later";
               h += '<div class="task-card'+(tk.d?' done-card':'')+'">';
               h += '<div class="t-title">'+esc(tk.t)+'</div>';
@@ -139,6 +153,7 @@
               } else {
                 h += '<button data-tundo="'+tk.id+'">Undo</button>';
               }
+              h += '<button data-tedit="'+tk.id+'">Edit</button>';
               h += '<button data-dta="'+tk.id+'">✕</button>';
               h += '</div></div>';
             });
@@ -181,7 +196,11 @@
           if (ct === "timer") paintT();
 
           document.querySelectorAll("[data-ct]").forEach(function (b) {
-            b.onclick = function () { ct = b.dataset.ct; computer(); };
+            b.onclick = function () {
+              ct = b.dataset.ct;
+              if (ct !== "tasks") editingTaskId = null;
+              computer();
+            };
           });
 
           if (ct === "play") {
@@ -287,6 +306,51 @@
               if ($("#na")) $("#na").focus();
               else addTask();
             };
+            document.querySelectorAll("[data-tedit]").forEach(function (b) {
+              b.onclick = function () {
+                editingTaskId = b.dataset.tedit;
+                computer();
+                $("#edit-task-title").focus();
+              };
+            });
+            document.querySelectorAll("[data-tsave]").forEach(function (b) {
+              b.onclick = function () {
+                var tk = S.tasks.filter(function (x) {
+                    return x.id === b.dataset.tsave;
+                  })[0],
+                  title = $("#edit-task-title").value.trim();
+                if (!tk) return;
+                if (!title) {
+                  toastMsg("A task needs a title.");
+                  $("#edit-task-title").focus();
+                  return;
+                }
+                tk.t = title;
+                tk.q = $("#edit-task-priority").value;
+                tk.due = $("#edit-task-due").value;
+                tk.tag = $("#edit-task-tag").value.trim();
+                editingTaskId = null;
+                save();
+                computer();
+              };
+            });
+            document.querySelectorAll("[data-tcancel]").forEach(function (b) {
+              b.onclick = function () {
+                editingTaskId = null;
+                computer();
+              };
+            });
+            if ($("#edit-task-title")) {
+              $("#edit-task-title").onkeydown = function (e) {
+                if (e.key === "Enter" || e.key === "Escape") {
+                  e.preventDefault();
+                  var button = document.querySelector(
+                    e.key === "Enter" ? "[data-tsave]" : "[data-tcancel]",
+                  );
+                  if (button) button.click();
+                }
+              };
+            }
             document.querySelectorAll("[data-tstart]").forEach(function (b) {
               b.onclick = function () {
                 var id = b.dataset.tstart;

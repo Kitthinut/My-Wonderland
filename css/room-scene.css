@@ -130,6 +130,9 @@
         left: 830px;
         top: 78px;
         width: 120px;
+      }
+      #s11 {
+        width: 150px;
         height: 10px;
         background: var(--wood);
         border: 3px solid var(--wood2);

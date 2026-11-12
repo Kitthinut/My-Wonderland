@@ -48,6 +48,25 @@
           });
           return n;
         }
+        function totalHabitXP() {
+          var months = Object.keys(S.months || {}),
+            today = new Date(),
+            current = key(today.getFullYear(), today.getMonth() + 1);
+          if (months.indexOf(current) < 0) months.push(current);
+          return months.reduce(function (total, month) {
+            var parts = month.split("-"),
+              year = Number(parts[0]),
+              monthNumber = Number(parts[1]);
+            if (
+              !/^\d{4}-\d{2}$/.test(month) ||
+              monthNumber < 1 ||
+              monthNumber > 12
+            ) {
+              return total;
+            }
+            return total + totalXP(year, monthNumber);
+          }, 0);
+        }
         function totalAllXP() {
           var td = dstr();
           var tasksDone = (S.tasks || []).filter(function (t) {
@@ -56,7 +75,7 @@
           var tasksOnTime = (S.tasks || []).filter(function (t) {
             return t.d && t.at && (!t.due || t.at <= t.due);
           }).length;
-          var habitXP = totalXP(V.y, V.m);
+          var habitXP = totalHabitXP();
           var taskXP = tasksDone * 25 + tasksOnTime * 15;
           var focusXP = totalFocusSessions() * 15;
           return habitXP + taskXP + focusXP + questBonusXP();

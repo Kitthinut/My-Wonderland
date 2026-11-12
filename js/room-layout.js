@@ -22,7 +22,7 @@
           editing = false,
           D0 = {},
           drag = null,
-          IDS = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"],
+          IDS = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11"],
           HD = {
             s1: { l: 18, t: 35, w: 155, h: 310 },
             s2: { l: 710, t: 55, w: 145, h: 145 },
@@ -34,6 +34,7 @@
             s8: { l: 845, t: 60, w: 95, h: 120 },
             s9: { l: 670, t: 210, w: 140, h: 155 },
             s10: { l: 400, t: 480, w: 120, h: 100 },
+            s11: { l: 175, t: 405, w: 150, h: 150 },
           };
         function setBg(u) {
           bg = u;
@@ -81,7 +82,7 @@
         }
         function pic() {
           $("#body").innerHTML =
-            '<h2>🖼 room picture</h2><p class="muted">Choose an illustration of your room. It stays on this device only. Then drag the tap zones over your shelf, board, fridge, and computer.</p><div class="bar"><input type="file" id="pf" accept="image/*"></div><div class="bar"><button class="btn" id="pz"' +
+            '<h2>🖼 room picture</h2><p class="muted">Choose an illustration of your room. It stays on this device only. Then drag the tap zones over your furniture and room corners, including the bed.</p><div class="bar"><input type="file" id="pf" accept="image/*"></div><div class="bar"><button class="btn" id="pz"' +
             (bg ? "" : " disabled") +
             '>Adjust tap zones</button><button class="btn ghost" id="pr"' +
             (bg ? "" : " disabled") +
@@ -231,6 +232,7 @@
             s8: "Wall calendar",
             s9: "Money book",
             s10: "Way to wonder",
+            s11: "Bed (sign out)",
           };
         try {
           IM = JSON.parse(localStorage.getItem("cozyroom_im") || "{}");
