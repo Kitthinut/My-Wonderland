@@ -232,7 +232,7 @@
             s8: "Wall calendar",
             s9: "Money book",
             s10: "Way to wonder",
-            s11: "Bed (sign out)",
+            s11: "Bed (close app)",
           };
         try {
           IM = JSON.parse(localStorage.getItem("cozyroom_im") || "{}");

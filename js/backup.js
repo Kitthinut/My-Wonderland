@@ -67,7 +67,12 @@
           wonder();
         };
         $("#s11").onclick = function () {
-          $("#sync-account").click();
+          window.close();
+          if (!window.closed) {
+            openM();
+            $("#body").innerHTML =
+              '<h2>🌙 good night</h2><p class="muted">Your device won’t let this page close the app window directly. Use your app switcher or browser controls to close My Wonderland.</p>';
+          }
         };
         $("#s9").onclick = function () {
           openM();
