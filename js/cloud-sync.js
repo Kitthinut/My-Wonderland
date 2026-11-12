@@ -443,10 +443,28 @@
         $("#sync-password").focus();
         return;
       }
-      var operation =
+      if (!auth) {
+        showError("Firebase Authentication is unavailable. Reload the page and try again.");
+        console.error("Firebase Auth was not initialized before the sync form was submitted.");
+        return;
+      }
+      var authMethod =
         authMode === "create"
-          ? auth.createUserWithEmailAndPassword(email, password)
-          : auth.signInWithEmailAndPassword(email, password);
+          ? auth.createUserWithEmailAndPassword
+          : auth.signInWithEmailAndPassword;
+      if (typeof authMethod !== "function") {
+        showError("Firebase Authentication did not load correctly. Check the Firebase SDK scripts and reload.");
+        console.error("Firebase Auth is missing the requested email/password method.", auth);
+        return;
+      }
+      var operation;
+      try {
+        operation = authMethod.call(auth, email, password);
+      } catch (error) {
+        showError("Could not start Firebase sign-in. Check your Firebase setup and reload.");
+        console.error("Could not start Firebase email/password authentication.", error);
+        return;
+      }
       operation
         .then(function () {
           closeM();
