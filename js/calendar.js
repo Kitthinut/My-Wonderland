@@ -24,7 +24,7 @@
             pm[p.date] = (pm[p.date] || 0) + 1;
           });
           var h =
-            '<h2>🗓️ wall calendar</h2><div class="bar"><select id="cm" aria-label="Month">' +
+            '<h2>🗓️ wall calendar</h2><div class="bar calendar-controls"><select id="cm" aria-label="Month">' +
             MN.map(function (n, i) {
               return (
                 '<option value="' +
@@ -40,9 +40,9 @@
             y +
             '" style="width:90px" aria-label="Year"><a class="btn" target="_blank" rel="noopener" href="' +
             esc(main) +
-            '">Open Google Calendar</a></div><details><summary class="muted">Change calendar link</summary><div class="bar" style="margin-top:8px"><input id="cl" placeholder="Paste your calendar link" value="' +
+            '">Open Google Calendar</a></div><details class="calendar-settings"><summary class="muted">Change calendar link</summary><div class="bar" style="margin-top:8px"><input id="cl" placeholder="Paste your calendar link" value="' +
             esc(S.main.cal || "") +
-            '" style="flex:1"><button class="btn" id="cls">Save</button></div></details><p class="muted">Plans live here. Finished pomodoros show as ⏱ (only when the timer truly reaches zero — reset or switch cancels). Post-its show as ✨.</p><div class="cal" style="max-width:560px">';
+            '" style="flex:1"><button class="btn" id="cls">Save</button></div></details><p class="muted calendar-help">Plans live here. Finished pomodoros show as ⏱ (only when the timer truly reaches zero — reset or switch cancels). Post-its show as ✨.</p><div class="cal" style="max-width:560px">';
           "SMTWTFS".split("").forEach(function (c) {
             h += "<b>" + c + "</b>";
           });
@@ -75,7 +75,7 @@
               "</div>";
           }
           var L = S.plans[CD] || [];
-          h += '</div><p style="margin:16px 0 6px"><b>' + CD + "</b></p>";
+          h += '</div><p class="calendar-selected-date"><b>' + CD + "</b></p>";
           if (!L.length)
             h += '<p class="muted">Nothing planned. Add something below.</p>';
           L.forEach(function (x) {
@@ -110,7 +110,7 @@
               " XP)</p>";
           }
           h +=
-            '<div class="bar" style="margin-top:10px"><input id="pl" placeholder="Add a plan for this day" style="flex:1"><button class="btn" id="pla">Add</button></div>';
+            '<div class="bar calendar-add-plan" style="margin-top:10px"><input id="pl" placeholder="Add a plan for this day" style="flex:1"><button class="btn" id="pla">Add</button></div>';
           $("#body").innerHTML = h;
           $("#cm").onchange = function () {
             CV.m = +this.value;

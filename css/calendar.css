@@ -1,0 +1,122 @@
+.calendar-controls {
+  align-items: stretch;
+}
+
+.calendar-controls select {
+  flex: 1 1 130px;
+  min-width: 0;
+}
+
+.calendar-controls input[type="number"] {
+  flex: 0 1 90px;
+}
+
+.calendar-controls .btn {
+  flex: 1 1 180px;
+  text-align: center;
+}
+
+.calendar-settings {
+  margin: 8px 0;
+}
+
+.calendar-settings summary {
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.calendar-settings .bar input {
+  min-width: 0;
+}
+
+.calendar-help {
+  margin: 10px 0;
+  line-height: 1.45;
+}
+
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(3px, 1vw, 7px);
+  width: 100%;
+  margin: 12px auto;
+}
+
+.cal > b {
+  min-width: 0;
+  padding: 4px 0;
+  color: var(--soft);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.cal > [role="button"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+  min-height: 72px;
+  padding: 6px;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.cal > [role="button"]:hover {
+  border-color: var(--pink);
+  background: var(--wall);
+}
+
+.cal > [role="button"]:focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.cal .pn {
+  display: block;
+  max-width: 100%;
+  padding: 2px 4px;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--wall2);
+  border-radius: 5px;
+  font-size: clamp(0.55rem, 1.8vw, 0.7rem);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-selected-date {
+  margin: 16px 0 6px;
+}
+
+.calendar-add-plan input {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .cal {
+    gap: 3px;
+  }
+
+  .cal > b {
+    font-size: 0.7rem;
+  }
+
+  .cal > [role="button"] {
+    min-height: 54px;
+    padding: 4px 3px;
+    border-radius: 6px;
+  }
+
+  .cal .pn {
+    max-width: 100%;
+    padding: 1px 3px;
+    font-size: 0.55rem;
+  }
+}
