@@ -23,6 +23,16 @@
           };
           IDS.forEach(function (id) {
             var el = $(Q[id]);
+            if (!el) {
+              console.error(
+                "Could not apply the room decoration for " +
+                  id +
+                  ": " +
+                  Q[id] +
+                  " was not found.",
+              );
+              return;
+            }
             if (IM[id]) {
               el.innerHTML =
                 '<img src="' +
