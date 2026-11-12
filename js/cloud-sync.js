@@ -407,7 +407,7 @@
       '">Sign in</button><button type="button" data-auth-mode="create" class="' +
       (authMode === "create" ? "on" : "") +
       '">Create account</button></div>';
-    h += '<form id="sync-form"><label>Email<input id="sync-email" type="email" autocomplete="email" required></label>';
+    h += '<form id="sync-form" novalidate><label>Email<input id="sync-email" type="email" autocomplete="email" required placeholder="you@example.com"></label>';
     h += '<label>Password<input id="sync-password" type="password" minlength="6" autocomplete="' +
       (authMode === "create" ? "new-password" : "current-password") +
       '" required></label>';
@@ -425,8 +425,24 @@
     $("#sync-cancel").onclick = closeM;
     $("#sync-form").onsubmit = function (event) {
       event.preventDefault();
-      var email = $("#sync-email").value.trim();
+      var emailInput = $("#sync-email");
+      var email = emailInput.value.trim();
       var password = $("#sync-password").value;
+      var emailError = emailInput.validity.valueMissing
+        ? "Enter your email address."
+        : emailInput.validity.typeMismatch
+          ? "Enter a valid email address, like you@example.com."
+          : "";
+      if (emailError) {
+        showError(emailError);
+        emailInput.focus();
+        return;
+      }
+      if (password.length < 6) {
+        showError("Your password must be at least 6 characters.");
+        $("#sync-password").focus();
+        return;
+      }
       var operation =
         authMode === "create"
           ? auth.createUserWithEmailAndPassword(email, password)
@@ -442,6 +458,8 @@
             "auth/weak-password": "Choose a password with at least 6 characters.",
             "auth/invalid-email": "Enter a valid email address.",
             "auth/too-many-requests": "Too many attempts. Wait a little and try again.",
+            "auth/operation-not-allowed": "Email/Password sign-in is disabled in Firebase Authentication settings.",
+            "auth/network-request-failed": "Could not reach Firebase. Check your internet connection and try again.",
           };
           showError(messages[error.code] || error.message);
         });
