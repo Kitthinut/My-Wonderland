@@ -1,0 +1,187 @@
+      .pomo-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin: 6px 0 12px;
+      }
+      .pomo-table th {
+        background: var(--wall2);
+        padding: 6px 8px;
+        text-align: left;
+        border-bottom: 2px solid var(--line);
+      }
+      .pomo-table td {
+        padding: 4px 6px;
+        border-bottom: 1px dashed var(--line);
+      }
+      .pomo-table input[type="text"],
+      .pomo-table input[type="number"],
+      .pomo-table input[type="time"] {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: var(--card);
+        padding: 4px 6px;
+        border-radius: 6px;
+        color: var(--ink);
+        font-size: 0.85rem;
+      }
+      .pomo-table input[type="number"] { width: 64px; }
+      .prod-scale {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin: 6px 0 12px;
+      }
+      .prod-scale button {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 2px solid var(--line);
+        background: var(--wall);
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0;
+      }
+      .prod-scale button.on {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      .teapot {
+        width: 120px;
+        height: 100px;
+        margin: 0 auto 12px;
+        position: relative;
+        text-align: center;
+        font-size: 4rem;
+        line-height: 1;
+        filter: drop-shadow(0 4px 8px var(--shadow));
+      }
+      .wonder-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+      }
+      .wonder-card {
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        text-align: center;
+        position: relative;
+      }
+      .wonder-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin: 0 0 10px;
+      }
+      .wonder-editor {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 14px;
+      }
+      .wonder-editor h3,
+      .wonder-editor .bar,
+      .wonder-error {
+        grid-column: 1 / -1;
+        margin: 0;
+      }
+      .wonder-editor label {
+        display: grid;
+        gap: 4px;
+        color: var(--soft);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .wonder-error:not([hidden]) {
+        color: #c62828;
+      }
+      .wonder-edit {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--wall);
+        padding: 3px 6px;
+      }
+      .wonder-card.locked { opacity: 0.55; }
+      .wonder-card.claimed {
+        border-color: var(--ink);
+        box-shadow: 0 0 0 3px rgba(114,134,211,0.2);
+      }
+      .wonder-card .ico { font-size: 2rem; margin-bottom: 4px; }
+      .wonder-card .cost {
+        font-size: 0.75rem;
+        color: var(--soft);
+        margin-top: 4px;
+      }
+
+      .task-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .task-card {
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-height: 150px;
+      }
+      .task-card.done-card { opacity: 0.55; }
+      .task-card .t-title { font-weight: 700; font-size: 1rem; color: var(--ink); }
+      .task-card .t-pri { font-size: 0.8rem; font-weight: 700; }
+      .task-card .t-pri.q1 { color: #e57373; }
+      .task-card .t-pri.q2 { color: #64b5f6; }
+      .task-card .t-due { font-size: 0.8rem; }
+      .task-card .t-due.over { color: #e57373; }
+      .task-card .t-due.soon { color: #ffb74d; }
+      .task-card .t-due.ok { color: #81c784; }
+      .task-card .t-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--wall2);
+        color: var(--ink);
+        width: fit-content;
+      }
+      .task-card .t-time { font-size: 0.85rem; color: var(--soft); }
+      .task-card .t-acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+      .task-card .t-acts button {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--wall);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      .task-card .t-acts button.on {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      .task-new {
+        border: 2px dashed var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--soft);
+        cursor: pointer;
+        min-height: 150px;
+        background: transparent;
+      }
+      .reward-form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }

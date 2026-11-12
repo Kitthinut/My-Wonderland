@@ -1,0 +1,171 @@
+      .hab-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      .hab-circle { min-width: 0; }
+      .hab-side {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .hab-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        background: var(--card);
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+      .game-bar {
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .game-lvl {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.05rem;
+      }
+      .game-badge { font-size: 1.4rem; }
+      .game-xp {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .game-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.85rem;
+        color: var(--ink);
+      }
+      .game-stats span {
+        background: var(--wall);
+        padding: 2px 8px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+      }
+      @keyframes pop {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.25); }
+        100% { transform: scale(1); }
+      }
+      .pop { animation: pop 0.35s ease; }
+      @media (max-width: 700px) {
+        .hab-layout { grid-template-columns: 1fr; }
+      }
+
+      .mood-wrap {
+        margin-bottom: 16px;
+      }
+      .mood-chart {
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+      .mood-faces {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+        margin-top: 6px;
+      }
+      .mood-faces span {
+        width: 22px;
+        text-align: center;
+        font-size: 0.85rem;
+        cursor: default;
+      }
+      .postits {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .postit {
+        background: #FFF9C4;
+        border-radius: 4px;
+        padding: 12px 10px 10px;
+        box-shadow: 2px 3px 0 var(--shadow);
+        font-family: "Gaegu", "Comic Sans MS", cursive;
+        font-size: 0.95rem;
+        color: #7286D3;
+        position: relative;
+        min-height: 120px;
+        cursor: pointer;
+        transition: transform 0.15s;
+        line-height: 1.25;
+      }
+      .postit:nth-child(3n+1) { background: var(--wall); transform: rotate(-1.5deg); }
+      .postit:nth-child(3n+2) { background: #8EA7E9; transform: rotate(1deg); }
+      .postit:nth-child(3n) { background: #A7AAE1; transform: rotate(-0.5deg); }
+      .postit:nth-child(4n) { background: #EDE7F6; transform: rotate(1.2deg); }
+      .postit:hover { transform: scale(1.03) rotate(0deg); z-index: 2; }
+      .postit .pd {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-bottom: 4px;
+      }
+      .postit .pm {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+      }
+      .postit .pt {
+        font-size: 0.85rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .postit.on {
+        outline: 3px solid var(--pink);
+      }
+      .mood-pick {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: 8px 0;
+      }
+      .mood-pick button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--line);
+        background: var(--wall);
+        font-size: 1.3rem;
+        padding: 0;
+      }
+      .mood-pick button.on {
+        border-color: var(--pink);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(144,202,249,0.4);
+      }
+      .sleep-pick {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: 6px 0;
+      }
+      .sleep-pick button {
+        border-radius: 20px;
+        border: 2px solid var(--line);
+        background: var(--wall);
+        padding: 4px 10px;
+        font-size: 0.85rem;
+      }
+      .sleep-pick button.on {
+        background: var(--pink);
+        color: #fff;
+        border-color: var(--pink);
+      }

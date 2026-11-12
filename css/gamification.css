@@ -1,0 +1,42 @@
+      .quest-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+      .quest-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+      .quest-row.done { border-color: var(--ink); opacity: 0.85; }
+      .quest-row .q-check {
+        width: 28px; height: 28px; border-radius: 50%;
+        border: 2px solid var(--line);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; font-size: 0.9rem;
+      }
+      .quest-row.done .q-check {
+        background: var(--ink); color: #fff; border-color: var(--ink);
+      }
+      .quest-row .q-body { flex: 1; }
+      .quest-row .q-xp { font-weight: 700; color: var(--soft); font-size: 0.85rem; white-space: nowrap; }
+      .rank-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--wall2); border-radius: 999px;
+        padding: 4px 12px; font-size: 0.85rem; font-weight: 700;
+      }
+      .ach-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+      }
+      .ach-card {
+        text-align: center; padding: 10px; border-radius: 12px;
+        border: 2px solid var(--line); background: var(--card); font-size: 0.8rem;
+      }
+      .ach-card.off { opacity: 0.4; filter: grayscale(0.8); }
+      .xp-chip {
+        border: 2px solid var(--line); background: var(--card);
+        border-radius: 999px; padding: 4px 10px; font-size: 0.8rem;
+        font-weight: 700; color: var(--ink); cursor: default;
+      }

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>My Wonderland Room</title>
+    <meta name="theme-color" content="#FFF2F2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Wonderland Room" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="description" content="My cozy Wonderland room – journal, habits, planner & more" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+    <link rel="stylesheet" href="css/foundation.css" />
+    <link rel="stylesheet" href="css/room-scene.css" />
+    <link rel="stylesheet" href="css/habits.css" />
+    <link rel="stylesheet" href="css/planning-food.css" />
+    <link rel="stylesheet" href="css/focus.css" />
+    <link rel="stylesheet" href="css/gamification.css" />
+  </head>
+  <body>
+    <div class="tools">
+      <button id="th" aria-label="Toggle dark mode" title="Toggle dark / light">🌙</button
+      ><span id="xpchip" class="xp-chip" title="Level & XP">⭐ Lv 1</span
+      ><button id="ab" aria-label="Arrange room">✏️ Arrange</button
+      ><button id="pb" aria-label="Change room picture">🖼 Room</button
+      ><button id="bk" aria-label="Backup and restore">💾 Backup</button>
+    </div>
+    <header>
+      <h1>my wonderland room</h1>
+      <p>tap anything in the room to open it ✨</p>
+    </header>
+    <main class="scene" id="scene">
+      <div class="stage" id="stage">
+        <img id="bgimg" alt="" />
+        <div class="wall"></div>
+        <div class="flr"></div>
+        <div class="rod"></div>
+        <div class="curt"></div>
+        <div class="win"></div>
+        <div class="bunt">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="wbk">
+          <i style="height: 30px; background: var(--pink)"></i
+          ><i style="height: 36px; background: var(--sage)"></i
+          ><i style="height: 26px; background: var(--lilac)"></i
+          ><i style="height: 34px; background: var(--butter)"></i>
+        </div>
+        <div class="wsh"></div>
+        <i class="ear" style="left: 62px; top: 456px"></i
+        ><i class="ear" style="left: 226px; top: 456px"></i>
+        <div class="rug"></div>
+        <div class="fl" style="left: 330px; top: 520px"></div>
+        <div class="fl" style="left: 880px; top: 535px"></div>
+        <em style="left: 668px; top: 395px; font-size: 52px; font-style: normal"
+          >🪴</em
+        >
+        <button
+          class="spot"
+          id="s1"
+          style="left: 24px; top: 172px; --z: 0.72"
+          aria-label="Open journal bookshelf"
+        >
+          <div class="shelf" id="shelf"></div>
+          <span>journal shelf</span>
+        </button>
+        <button
+          class="spot"
+          id="s2"
+          style="left: 520px; top: 58px; --z: 0.62"
+          aria-label="Open to-do and habit board"
+        >
+          <div class="board" id="board"></div>
+          <span>habit board</span>
+        </button>
+        <button
+          class="spot"
+          id="s3"
+          style="left: 800px; top: 118px"
+          aria-label="Open fridge: food planner and water"
+        >
+          <div class="fridge">
+            <b style="top: 30px; height: 40px"></b
+            ><b style="top: 105px; height: 60px"></b
+            ><em style="top: 14px; left: 18px">🍓</em
+            ><em style="top: 56px; left: 62px">💧</em
+            ><em style="top: 150px; left: 30px">🥑</em>
+          </div>
+          <span>fridge</span>
+        </button>
+        <button
+          class="spot"
+          id="s4"
+          style="left: 460px; top: 395px; --z: 0.8"
+          aria-label="Open computer corner"
+        >
+          <div class="desk">
+            <div class="mon"><div class="scr">⏱</div></div>
+            <div class="stand"></div>
+            <div class="tbl"></div>
+            <b class="leg" style="left: 20px"></b
+            ><b class="leg" style="right: 20px"></b
+            ><em style="left: 0; top: 128px; font-size: 3rem">🎮</em
+            ><em style="right: 0; top: 84px; font-size: 1.8rem">🖨️</em>
+          </div>
+          <span>computer corner</span>
+        </button>
+        <button
+          class="spot"
+          id="s5"
+          style="left: 280px; top: 250px"
+          aria-label="Open manifest corner"
+        >
+          <div class="mf"></div>
+          <span>manifest corner</span>
+        </button>
+        <button
+          class="spot"
+          id="s6"
+          style="left: 520px; top: 245px; --z: 0.92"
+          aria-label="Open TV"
+        >
+          <div class="tvw"></div>
+          <span>TV</span>
+        </button>
+        <button
+          class="spot"
+          id="s7"
+          style="left: 735px; top: 312px"
+          aria-label="Open radio"
+        >
+          <div class="rad"></div>
+          <span>radio</span>
+        </button>
+        <button
+          class="spot"
+          id="s8"
+          style="left: 70px; top: 22px; --z: 0.8"
+          aria-label="Open wall calendar"
+        >
+          <div class="wcal"></div>
+          <span>calendar</span>
+        </button>
+        <button
+          class="spot"
+          id="s9"
+          style="left: 790px; top: 420px"
+          aria-label="Open money book"
+        >
+          <div class="mb"></div>
+          <span>money book</span>
+        </button>
+        <button
+          class="spot"
+          id="s10"
+          style="left: 400px; top: 480px; --z: 0.7"
+          aria-label="Open way to wonder"
+        >
+          <div class="teapot-spot" style="font-size:3.2rem;line-height:1;text-align:center;padding-top:8px">🫖</div>
+          <span>way to wonder</span>
+        </button>
+      </div>
+    </main>
+    <p class="later">all corners are open · tap anything in the room 🌷 · works on phone & iPad too</p>
+
+    <div id="eb" hidden>
+      <span>Drag a zone to move it, drag its pink corner to resize.</span
+      ><button class="btn" id="ed1">Done</button
+      ><button class="btn ghost" id="ed2">Reset zones</button>
+    </div>
+    <div class="ov" id="ov" hidden>
+      <div class="sheet">
+        <button class="x" aria-label="Close">✕</button>
+        <div id="body"></div>
+      </div>
+    </div>
+    <script src="js/core.js"></script>
+    <script src="js/journal.js"></script>
+    <script src="js/habits.js"></script>
+    <script src="js/food.js"></script>
+    <script src="js/focus.js"></script>
+    <script src="js/computer.js"></script>
+    <script src="js/wonder.js"></script>
+    <script src="js/media.js"></script>
+    <script src="js/manifest.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/money.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="js/room-layout.js"></script>
+    <script src="js/startup.js"></script>
+  </body>
+</html>
