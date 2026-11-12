@@ -29,6 +29,36 @@
   min-width: 0;
 }
 
+.calendar-embed {
+  margin: 10px 0;
+}
+
+.calendar-embed summary {
+  padding: 8px 0;
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.google-calendar-frame {
+  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.google-calendar-frame iframe {
+  display: block;
+  width: 100%;
+  height: min(65vh, 680px);
+  border: 0;
+}
+
+.calendar-embed-error {
+  margin: 6px 0 0;
+  color: #b42318;
+}
+
 .calendar-help {
   margin: 10px 0;
   line-height: 1.45;

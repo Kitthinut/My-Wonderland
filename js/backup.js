@@ -56,7 +56,7 @@
         };
         $("#s7").onclick = function () {
           openM();
-          links("radio");
+          links("radio", true);
         };
         $("#s8").onclick = function () {
           openM();
