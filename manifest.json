@@ -1,0 +1,17 @@
+{
+  "name": "Heartslabyul Room",
+  "short_name": "My Room",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6d5d9",
+  "theme_color": "#a8203a",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
