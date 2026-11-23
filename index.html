@@ -1402,8 +1402,9 @@
       </g>
     </svg>
 
+    <script src="firebase-config.js"></script>
     <script>
-      const FB = { apiKey: "", authDomain: "", projectId: "", appId: "" }; // paste your Firebase web config here
+      const FB = window.FIREBASE_CONFIG || {};
       const KEY = "hl1",
         $ = (s) => document.querySelector(s),
         v = (i) => document.getElementById(i).value,
