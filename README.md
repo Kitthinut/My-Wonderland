@@ -19,7 +19,7 @@ One Google sign-in powers both sync and the calendar. Nothing else needs a serve
 ## 2. Firebase project (sync + login)
 1. https://console.firebase.google.com → Add project.
 2. Project settings → Your apps → Web (`</>`) → register → copy the `firebaseConfig`.
-3. Copy `firebase-config.example.js` to `firebase-config.js` and fill in `apiKey`, `authDomain`, `projectId`, and `appId` from your Firebase web app settings. `firebase-config.js` is ignored by Git, so a published copy without a deployment-provided config runs locally without Firebase sync. Firebase web API keys are client identifiers, not secrets; restrict them where possible and rely on Firebase security rules to protect data.
+3. Set the Firebase config, either by copying `firebase-config.example.js` to `firebase-config.js` and filling in `apiKey`, `authDomain`, `projectId`, and `appId`, or — on a device where editing files is awkward — open **Settings → 🔑 Google sign-in setup**, paste the four values, and press **Save & sign in with Google**. The settings form saves the config on that device and immediately opens Google sign-in. `firebase-config.js` is ignored by Git; the settings form is remembered in the browser. Firebase web API keys are client identifiers, not secrets; restrict them where possible and rely on Firebase security rules to protect data. Once configured, pressing **Sign in with Google** redirects straight to the Google sign-in page and returns you to the app signed in, with cloud sync and Google Calendar ready.
 4. Build → Authentication → Get started → Sign-in method → enable **Google**.
 5. Authentication → Settings → **Authorized domains** → add `YOURNAME.github.io`.
 6. Build → Firestore Database → Create database (production mode). Rules tab, paste and publish:

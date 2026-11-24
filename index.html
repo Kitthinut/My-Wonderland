@@ -1404,7 +1404,15 @@
 
     <script src="firebase-config.js"></script>
     <script>
-      const FB = window.FIREBASE_CONFIG || {};
+      const FB_KEY = "hl_fb",
+        storedFB = () => {
+          try {
+            return JSON.parse(localStorage[FB_KEY] || "null");
+          } catch {
+            return null;
+          }
+        },
+        FB = storedFB() || window.FIREBASE_CONFIG || {};
       const KEY = "hl1",
         $ = (s) => document.querySelector(s),
         v = (i) => document.getElementById(i).value,
@@ -2095,6 +2103,7 @@
           navigator.standalone;
       const vSet =
         () => `<h4>👤 Profile</h4><div class=row><span class="av big">${AV()}</span><div style="flex:1"><input id=pn placeholder="Your name" value="${esc(S.prof.name)}" onchange="A.pname(this.value)"><input type=file accept="image/*" onchange="A.ppic(this)"></div></div><div class=sum><span>Level<br><b>${1 + Math.floor(S.xp / 100)}</b></span><span>Total XP<br><b>${S.xp}</b></span></div><div class=bar><i style="width:${S.xp % 100}%"></i></div><small>${100 - (S.xp % 100)} XP to the next level</small><p>${acct ? `Signed in as <b>${esc(acct)}</b>` : "Not signed in. Your data stays on this device."}</p>${acct ? '<button class=s onclick="A.logout()">Sign out</button>' : '<button onclick="A.login()">Sign in with Google</button>'}
+<h4>🔑 Google sign-in setup</h4><details><summary>Enter your Firebase config (needed on a new device)</summary><small>Paste the same values from your Firebase web app once per device, then press the button. Google sign-in then works by pressing the button.</small><div class=ed><label>API key<input id=fbak placeholder="AIza..." value="${esc(FB.apiKey)}"></label><label>Auth domain<input id=fbad placeholder="your-app.firebaseapp.com" value="${esc(FB.authDomain)}"></label><label>Project ID<input id=fbpid placeholder="your-app" value="${esc(FB.projectId)}"></label><label>App ID<input id=fbapp placeholder="1:..." value="${esc(FB.appId)}"></label></div><button style="width:100%" onclick="A.fbconf()">Save &amp; sign in with Google</button></details>
 <h4>🛋 Arrange room</h4><small>Drag any furniture to where you want it.</small><button style="width:100%" onclick="A.arr()">Start arranging</button><button class=s onclick="A.rlay()">↺ Reset layout</button>
 <h4>📲 Install on this device</h4>${sa ? "<p>✅ Already installed.</p>" : '<button style="width:100%" onclick="A.inst()">Install app</button>'}<div class=card><b>iPhone / iPad${ios ? " (this device)" : ""}</b><br><small>Open in Safari, tap Share, then Add to Home Screen, then Add.</small></div><div class=card><b>Android / Chrome${ios ? "" : " (this device)"}</b><br><small>Chrome menu ⋮, then Install app (or Add to Home screen).</small></div>`;
       // ---------- level, install, arrange
@@ -2189,17 +2198,29 @@
           cur = 0;
         },
         login: async () => {
-          if (!fb)
-            return alert("Paste your Firebase config into index.html first.");
+          if (!fb || !FB.apiKey)
+            return alert("Add your Firebase config in Settings → Google sign-in setup first.");
+          const p = new fb.a.GoogleAuthProvider();
+          p.addScope("https://www.googleapis.com/auth/calendar.events");
           try {
-            const p = new fb.a.GoogleAuthProvider();
-            p.addScope("https://www.googleapis.com/auth/calendar.events");
-            const r = await fb.a.signInWithPopup(fb.auth, p);
-            tok = fb.a.GoogleAuthProvider.credentialFromResult(r).accessToken;
-            loadEv();
+            // Same as Hydrangea: leave this page for Google sign-in, then come back signed in.
+            await fb.a.signInWithRedirect(fb.auth, p);
           } catch (e) {
             alert(e.message);
           }
+        },
+        fbconf: () => {
+          const c = {
+            apiKey: v("fbak").trim(),
+            authDomain: v("fbad").trim(),
+            projectId: v("fbpid").trim(),
+            appId: v("fbapp").trim(),
+          };
+          if (!c.apiKey || !c.authDomain || !c.projectId || !c.appId)
+            return alert("Fill in all four Firebase values.");
+          localStorage[FB_KEY] = JSON.stringify(c);
+          sessionStorage.setItem("hl_autologin", "1");
+          location.reload();
         },
         day: (k) => {
           cd = k;
@@ -2646,6 +2667,17 @@
             ),
             app = a.initializeApp(FB);
           fb = { a: p, s, auth: p.getAuth(app), db: s.getFirestore(app) };
+          p
+            .getRedirectResult(fb.auth)
+            .then((r) => {
+              if (r)
+                tok = p.GoogleAuthProvider.credentialFromResult(r).accessToken;
+              if (sessionStorage.getItem("hl_autologin")) {
+                sessionStorage.removeItem("hl_autologin");
+                A.login();
+              } else if (r) loadEv();
+            })
+            .catch(console.log);
           p.onAuthStateChanged(fb.auth, (us) => {
             uid = us?.uid;
             acct = us?.email || "";
