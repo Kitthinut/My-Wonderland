@@ -1404,19 +1404,10 @@
 
     <script src="firebase-config.js"></script>
     <script>
-      const FB_KEY = "hl_fb",
-        storedFB = () => {
-          try {
-            return JSON.parse(localStorage[FB_KEY] || "null");
-          } catch {
-            return null;
-          }
-        },
-        FB =
-          (typeof firebaseConfig !== "undefined" ? firebaseConfig : null) ||
-          window.FIREBASE_CONFIG ||
-          storedFB() ||
-          {};
+      const FB =
+        (typeof firebaseConfig !== "undefined" ? firebaseConfig : null) ||
+        window.FIREBASE_CONFIG ||
+        {};
       const KEY = "hl1",
         $ = (s) => document.querySelector(s),
         v = (i) => document.getElementById(i).value,
@@ -1458,7 +1449,6 @@
       };
       let S = { ...D, ...JSON.parse(localStorage[KEY] || "{}") },
         uid,
-        tok,
         fb,
         tm,
         cur,
@@ -1486,67 +1476,22 @@
         };
       // ---------- calendar
       let cm = new Date(),
-        cd = td(),
-        evs = [];
-      const ed = (e) => (e.start.date || e.start.dateTime).slice(0, 10);
-      async function gcal(p, o = {}) {
-        if (!tok) throw 0;
-        const r = await fetch(
-          "https://www.googleapis.com/calendar/v3/calendars/primary/events" + p,
-          {
-            ...o,
-            headers: {
-              Authorization: "Bearer " + tok,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (r.status == 401) {
-          tok = null;
-          throw 0;
-        }
-        return r.json();
-      }
-      async function loadEv() {
-        if (!tok) return R();
-        const y = cm.getFullYear(),
-          m = cm.getMonth();
-        try {
-          const j = await gcal(
-            "?singleEvents=true&orderBy=startTime&maxResults=250&timeMin=" +
-              new Date(y, m, 1).toISOString() +
-              "&timeMax=" +
-              new Date(y, m + 1, 1).toISOString(),
-          );
-          evs = j.items || [];
-        } catch {
-          evs = [];
-        }
-        R();
-      }
+        cd = td();
       const vCal = () => {
-        if (!tok)
-          return `<p>Sign in with Google to see and add your plans.</p><button onclick="A.login()">Sign in with Google</button>`;
         const y = cm.getFullYear(),
           m = cm.getMonth(),
           f = new Date(y, m, 1).getDay(),
           n = new Date(y, m + 1, 0).getDate();
         let g = "<i></i>".repeat(f);
         for (let d = 1; d <= n; d++) {
-          const k = `${y}-${pad(m + 1)}-${pad(d)}`,
-            c = evs.filter((e) => ed(e) == k).length;
-          g += `<b class="${k == cd ? "on" : ""}" onclick="A.day('${k}')">${d}<u>${c ? "♥" : ""}</u></b>`;
+          const k = `${y}-${pad(m + 1)}-${pad(d)}`;
+          g += `<b class="${k == cd ? "on" : ""}" onclick="A.day('${k}')">${d}</b>`;
         }
         return (
           `<div class=row><button class=s onclick="A.nav(-1)">◀</button><b>${cm.toLocaleString("en", { month: "long", year: "numeric" })}</b><button class=s onclick="A.nav(1)">▶</button></div><div class=grid>${g}</div><h4>${cd}</h4>` +
-          (evs
-            .filter((e) => ed(e) == cd)
-            .map(
-              (e) =>
-                `<div class=card>${e.start.dateTime ? e.start.dateTime.slice(11, 16) : "All day"} · ${esc(e.summary)}</div>`,
-            )
-            .join("") || "<p>No plans yet.</p>") +
-          `<input id=et placeholder="New plan"><div class=row><input id=es type=time value=09:00><input id=ee type=time value=10:00></div><button onclick="A.cadd()">Add to Google Calendar</button>`
+          "<p>Your plans stay in Google Calendar — no separate app sign-in needed there.</p>" +
+          '<div class=row><button style="flex:1" onclick="A.gcal()">📅 Open Google Calendar</button></div>' +
+          `<input id=et placeholder="New plan"><div class=row><input id=es type=time value=09:00><input id=ee type=time value=10:00></div><button style="width:100%" onclick="A.cadd()">Add to Google Calendar</button>`
         );
       };
       // ---------- habits
@@ -2106,8 +2051,7 @@
           matchMedia("(display-mode: standalone)").matches ||
           navigator.standalone;
       const vSet =
-        () => `<h4>👤 Profile</h4><div class=row><span class="av big">${AV()}</span><div style="flex:1"><input id=pn placeholder="Your name" value="${esc(S.prof.name)}" onchange="A.pname(this.value)"><input type=file accept="image/*" onchange="A.ppic(this)"></div></div><div class=sum><span>Level<br><b>${1 + Math.floor(S.xp / 100)}</b></span><span>Total XP<br><b>${S.xp}</b></span></div><div class=bar><i style="width:${S.xp % 100}%"></i></div><small>${100 - (S.xp % 100)} XP to the next level</small><p>${acct ? `Signed in as <b>${esc(acct)}</b>` : "Not signed in. Your data stays on this device."}</p>${acct ? '<button class=s onclick="A.logout()">Sign out</button>' : '<button onclick="A.login()">Sign in with Google</button>'}
-<h4>🔑 Google sign-in setup</h4><details><summary>Enter your Firebase config (needed on a new device)</summary><small>Paste the same values from your Firebase web app once per device, then press the button. Google sign-in then works by pressing the button.</small><div class=ed><label>API key<input id=fbak placeholder="AIza..." value="${esc(FB.apiKey)}"></label><label>Auth domain<input id=fbad placeholder="your-app.firebaseapp.com" value="${esc(FB.authDomain)}"></label><label>Project ID<input id=fbpid placeholder="your-app" value="${esc(FB.projectId)}"></label><label>App ID<input id=fbapp placeholder="1:..." value="${esc(FB.appId)}"></label></div><button style="width:100%" onclick="A.fbconf()">Save &amp; sign in with Google</button></details>
+        () => `<h4>👤 Profile</h4><div class=row><span class="av big">${AV()}</span><div style="flex:1"><input id=pn placeholder="Your name" value="${esc(S.prof.name)}" onchange="A.pname(this.value)"><input type=file accept="image/*" onchange="A.ppic(this)"></div></div><div class=sum><span>Level<br><b>${1 + Math.floor(S.xp / 100)}</b></span><span>Total XP<br><b>${S.xp}</b></span></div><div class=bar><i style="width:${S.xp % 100}%"></i></div><small>${100 - (S.xp % 100)} XP to the next level</small><p>${acct ? `Signed in as <b>${esc(acct)}</b>` : "Not signed in. Your data stays on this device."}</p>${acct ? '<button class=s onclick="A.logout()">Sign out</button>' : `<div class=ed><label>Email<input id=lemail type=email placeholder="you@example.com"></label><label>Password<input id=lpw type=password></label></div><div class=row><button style="flex:1" onclick="A.login()">Sign in</button><button onclick="A.signup()">Create account</button></div>`}
 <h4>🛋 Arrange room</h4><small>Drag any furniture to where you want it.</small><button style="width:100%" onclick="A.arr()">Start arranging</button><button class=s onclick="A.rlay()">↺ Reset layout</button>
 <h4>📲 Install on this device</h4>${sa ? "<p>✅ Already installed.</p>" : '<button style="width:100%" onclick="A.inst()">Install app</button>'}<div class=card><b>iPhone / iPad${ios ? " (this device)" : ""}</b><br><small>Open in Safari, tap Share, then Add to Home Screen, then Add.</small></div><div class=card><b>Android / Chrome${ios ? "" : " (this device)"}</b><br><small>Chrome menu ⋮, then Install app (or Add to Home screen).</small></div>`;
       // ---------- level, install, arrange
@@ -2182,10 +2126,7 @@
                 },
                 tv: () => show("📺 Watchlist", vTV),
                 radio: () => show("📻 Radio", vRadio),
-                cal: () => {
-                  show("🗓 Calendar", vCal);
-                  loadEv();
-                },
+                cal: () => show("🗓 Calendar", vCal),
                 hab: () => show("📌 Habit board", vHab),
                 food: () => show("🍎 Fridge", vFood),
                 book: () => {
@@ -2204,26 +2145,28 @@
         login: async () => {
           if (!fb || !FB.apiKey)
             return alert("Firebase config was not loaded. Check firebase-config.js.");
-          const p = new fb.a.GoogleAuthProvider();
-          p.addScope("https://www.googleapis.com/auth/calendar.events");
+          const email = v("lemail").trim(),
+            pw = v("lpw");
+          if (!email || !pw) return alert("Enter your email and password.");
           try {
-            await fb.a.signInWithRedirect(fb.auth, p);
+            await fb.a.signInWithEmailAndPassword(fb.auth, email, pw);
+            R();
           } catch (e) {
-            alert(`Google sign-in failed: ${e.message}`);
+            alert(`Sign-in failed: ${e.message}`);
           }
         },
-        fbconf: () => {
-          const c = {
-            apiKey: v("fbak").trim(),
-            authDomain: v("fbad").trim(),
-            projectId: v("fbpid").trim(),
-            appId: v("fbapp").trim(),
-          };
-          if (!c.apiKey || !c.authDomain || !c.projectId || !c.appId)
-            return alert("Fill in all four Firebase values.");
-          localStorage[FB_KEY] = JSON.stringify(c);
-          sessionStorage.setItem("hl_autologin", "1");
-          location.reload();
+        signup: async () => {
+          if (!fb || !FB.apiKey)
+            return alert("Firebase config was not loaded. Check firebase-config.js.");
+          const email = v("lemail").trim(),
+            pw = v("lpw");
+          if (!email || !pw) return alert("Enter your email and password.");
+          try {
+            await fb.a.createUserWithEmailAndPassword(fb.auth, email, pw);
+            R();
+          } catch (e) {
+            alert(`Could not create account: ${e.message}`);
+          }
         },
         day: (k) => {
           cd = k;
@@ -2231,25 +2174,26 @@
         },
         nav: (n) => {
           cm = new Date(cm.getFullYear(), cm.getMonth() + n, 1);
-          loadEv();
+          R();
         },
-        cadd: async () => {
-          const t = v("et");
+        gcal: () =>
+          window.open(
+            "https://calendar.google.com/calendar/u/0/r",
+            "_blank",
+            "noopener",
+          ),
+        cadd: () => {
+          const t = v("et").trim();
           if (!t) return;
-          const z = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          try {
-            await gcal("", {
-              method: "POST",
-              body: JSON.stringify({
-                summary: t,
-                start: { dateTime: `${cd}T${v("es")}:00`, timeZone: z },
-                end: { dateTime: `${cd}T${v("ee")}:00`, timeZone: z },
-              }),
-            });
-            loadEv();
-          } catch {
-            alert("Sign in again to add plans.");
-          }
+          const stamp = (time) => cd.replaceAll("-", "") + "T" + time.replace(":", "") + "00";
+          const url =
+            "https://calendar.google.com/calendar/u/0/r/eventedit?text=" +
+            encodeURIComponent(t) +
+            "&dates=" +
+            stamp(v("es")) +
+            "/" +
+            stamp(v("ee"));
+          window.open(url, "_blank", "noopener");
         },
         hadd: () => {
           const n = v("hn").trim();
@@ -2554,7 +2498,6 @@
           try {
             await fb.a.signOut(fb.auth);
           } catch {}
-          tok = null;
           uid = null;
           acct = "";
           R();
@@ -2670,17 +2613,6 @@
             ),
             app = a.initializeApp(FB);
           fb = { a: p, s, auth: p.getAuth(app), db: s.getFirestore(app) };
-          p
-            .getRedirectResult(fb.auth)
-            .then((r) => {
-              if (r)
-                tok = p.GoogleAuthProvider.credentialFromResult(r).accessToken;
-              if (sessionStorage.getItem("hl_autologin")) {
-                sessionStorage.removeItem("hl_autologin");
-                A.login();
-              } else if (r) loadEv();
-            })
-            .catch((e) => alert(`Google sign-in failed: ${e.message}`));
           p.onAuthStateChanged(fb.auth, (us) => {
             uid = us?.uid;
             acct = us?.email || "";
