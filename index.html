@@ -1412,7 +1412,11 @@
             return null;
           }
         },
-        FB = storedFB() || window.FIREBASE_CONFIG || {};
+        FB =
+          (typeof firebaseConfig !== "undefined" ? firebaseConfig : null) ||
+          window.FIREBASE_CONFIG ||
+          storedFB() ||
+          {};
       const KEY = "hl1",
         $ = (s) => document.querySelector(s),
         v = (i) => document.getElementById(i).value,
@@ -2199,14 +2203,13 @@
         },
         login: async () => {
           if (!fb || !FB.apiKey)
-            return alert("Add your Firebase config in Settings → Google sign-in setup first.");
+            return alert("Firebase config was not loaded. Check firebase-config.js.");
           const p = new fb.a.GoogleAuthProvider();
           p.addScope("https://www.googleapis.com/auth/calendar.events");
           try {
-            // Same as Hydrangea: leave this page for Google sign-in, then come back signed in.
             await fb.a.signInWithRedirect(fb.auth, p);
           } catch (e) {
-            alert(e.message);
+            alert(`Google sign-in failed: ${e.message}`);
           }
         },
         fbconf: () => {
@@ -2677,7 +2680,7 @@
                 A.login();
               } else if (r) loadEv();
             })
-            .catch(console.log);
+            .catch((e) => alert(`Google sign-in failed: ${e.message}`));
           p.onAuthStateChanged(fb.auth, (us) => {
             uid = us?.uid;
             acct = us?.email || "";
@@ -2696,7 +2699,8 @@
               });
           });
         } catch (e) {
-          console.log(e);
+          console.error("Firebase initialization failed", e);
+          alert(`Firebase setup failed: ${e.message}`);
         }
       })();
       if ("serviceWorker" in navigator)

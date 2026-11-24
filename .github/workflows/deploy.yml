@@ -1,0 +1,59 @@
+name: Deploy My Wonderland
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Change this to the environment name where you stored the values, if it's not "github-pages".
+    environment:
+      name: github-pages
+    env:
+      FIREBASE_API_KEY: ${{ vars.FIREBASE_API_KEY || vars.API_KEY || secrets.FIREBASE_API_KEY || secrets.API_KEY }}
+      FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN || vars.AUTH_DOMAIN || secrets.FIREBASE_AUTH_DOMAIN || secrets.AUTH_DOMAIN }}
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID || vars.PROJECT_ID || secrets.FIREBASE_PROJECT_ID || secrets.PROJECT_ID }}
+      FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID || vars.APP_ID || secrets.FIREBASE_APP_ID || secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write firebase-config.js from GitHub variables/secrets
+        run: |
+          if [ -z "$FIREBASE_API_KEY" ] || [ -z "$FIREBASE_AUTH_DOMAIN" ] || [ -z "$FIREBASE_PROJECT_ID" ] || [ -z "$FIREBASE_APP_ID" ]; then
+            echo "::warning::Firebase config values are missing. Add FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID and FIREBASE_APP_ID as Actions variables/secrets (repository or the github-pages environment). The site will deploy without them; use Settings -> Google sign-in setup on each device instead."
+          fi
+          cat > firebase-config.js <<EOF
+          const firebaseConfig = {
+            apiKey: "$FIREBASE_API_KEY",
+            authDomain: "$FIREBASE_AUTH_DOMAIN",
+            projectId: "$FIREBASE_PROJECT_ID",
+            appId: "$FIREBASE_APP_ID"
+          };
+          window.FIREBASE_CONFIG = firebaseConfig;
+          EOF
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
