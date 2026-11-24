@@ -13,6 +13,12 @@ Phone / tablet / iPad  ──(installed PWA)──>  GitHub Pages (hosts index.h
 
 Sign in with an email and password to sync your data across devices. No Google sign-in or Google Cloud setup is needed — the Calendar section simply opens Google Calendar.
 
+**Optional background:** put an image at `asset/bg.jpg` (or `assets/bg.jpg` / `assets/background.jpg`) in the repo. It is drawn behind the room furniture at full opacity, and also used as a fixed page background darkened with a brightness filter (no see-through overlay). If none of those files exist, the original room art and plain dark background are used.
+
+**Arrange mode:** tap ⚙ → Start arranging. The arrange panel is a movable popup — drag its "🛋 Arrange" header anywhere so it doesn't cover where you want to place things. Tap a furniture to select it. Drag to move; use the editor panel to change its width/height (W/H), toggle the 🔗 lock to keep the aspect ratio, or reset to 1:1. Labels can be nudged with the arrows, resized with A−/A+, given a font, hidden, or reset. All changes save and sync.
+
+**What's in the room:** Calendar (daily schedule, top priorities, appointments, goal, notes + Google Calendar links), habit board with streaks, fridge with meals and water tracking, daily and manifestation journals, money tracker with weekly/monthly/yearly budgets and breakdowns, tasks with priority/urgency/repeat and points/rewards, focus timer with a floating Picture-in-Picture option, YouTube watchlist and music playlists, and a manifest hub (affirmations, guided morning/night prompts, vision goals and a win log).
+
 ## 1. GitHub Pages (hosting)
 1. Create a repo (e.g. `My-Wonderland`) and upload everything in this folder (`index.html`, `manifest.json`, `sw.js`, `icon.svg`, `assets/`).
 2. Settings → Pages → Build and deployment: choose **GitHub Actions** if you use the config-injection workflow below, or "Deploy from branch" → `main` / root. Your URL will be `https://YOURNAME.github.io/My-Wonderland/`.
@@ -60,8 +66,8 @@ Stay signed in to Google in your browser so the calendar opens on the right acco
 ## 5. How data flows
 | Furniture | Stored in | Notes |
 |---|---|---|
-| Everything except Calendar | Firestore `users/{uid}` + local cache | Works offline, syncs when online |
-| Calendar | Your Google Calendar | Plain links — no token or API in the app |
+| Everything except Google Calendar | Firestore `users/{uid}` + local cache | Planner, water, journals, manifest entries — all work offline and sync when online |
+| Google Calendar | Your Google Calendar | Plain links — no token or API in the app |
 | TV / Radio | YouTube / YouTube Music links | Only your saved titles/playlists are stored |
 | Room layout, level/XP | Firestore `users/{uid}` | Arrange mode saves positions |
 

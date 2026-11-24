@@ -1,2655 +1,347 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#a8203a" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <title>Heartslabyul Room</title>
-    <style>
-      :root {
-        --r: #a8203a;
-        --c: #fff3e0;
-        --g: #d9a93b;
-        --k: #2b1a22;
-        --p: #f6d5d9;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        background: #2b1218;
-        color: var(--k);
-        font:
-          15px/1.4 Quicksand,
-          ui-rounded,
-          "Trebuchet MS",
-          sans-serif;
-        padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-      }
-      header {
-        width: 100%;
-        max-width: 520px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 14px;
-      }
-      h1 {
-        font:
-          700 32px "Dancing Script",
-          "Brush Script MT",
-          cursive;
-        color: #e8c36a;
-        margin: 0;
-      }
-      svg {
-        width: 100%;
-        max-width: 520px;
-        height: auto;
-        display: block;
-      }
-      .f {
-        cursor: pointer;
-        transition: transform 0.15s;
-      }
-      .f:hover,
-      .f:focus {
-        transform: translateY(-3px);
-        outline: none;
-      }
-      .f text {
-        font:
-          700 11px ui-rounded,
-          sans-serif;
-        fill: #fff;
-        pointer-events: none;
-      }
-      #m {
-        position: fixed;
-        inset: 0;
-        background: #2b1a2299;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        z-index: 9;
-      }
-      #m[hidden] {
-        display: none;
-      }
-      .sheet {
-        background: var(--c);
-        width: 100%;
-        max-width: 560px;
-        max-height: 90vh;
-        overflow: auto;
-        border-radius: 22px 22px 0 0;
-        border-top: 5px solid var(--g);
-        padding: 14px 14px calc(18px + env(safe-area-inset-bottom));
-      }
-      .sheet > div:first-child {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      h3 {
-        margin: 0;
-        font:
-          700 28px "Dancing Script",
-          "Brush Script MT",
-          cursive;
-        color: var(--r);
-      }
-      h4 {
-        margin: 14px 0 6px;
-        font:
-          700 21px "Dancing Script",
-          "Brush Script MT",
-          cursive;
-        color: var(--r);
-      }
-      button,
-      input,
-      select,
-      textarea {
-        font: inherit;
-        border: 2px solid var(--r);
-        border-radius: 12px;
-        padding: 8px 10px;
-        background: #fff;
-        color: var(--k);
-        min-width: 0;
-      }
-      button {
-        background: var(--r);
-        color: #fff;
-        cursor: pointer;
-        font-weight: 700;
-      }
-      button:active {
-        transform: scale(0.96);
-      }
-      button.s {
-        padding: 2px 8px;
-        background: #fff;
-        color: var(--r);
-        margin-left: 4px;
-      }
-      button.on {
-        background: var(--g);
-        border-color: var(--g);
-        color: var(--k);
-      }
-      input,
-      select,
-      textarea {
-        width: 100%;
-        margin: 3px 0;
-      }
-      .row {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        justify-content: space-between;
-        margin: 5px 0;
-      }
-      .row > input,
-      .row > select {
-        flex: 1;
-      }
-      .card {
-        background: #fff;
-        border-radius: 14px;
-        padding: 10px;
-        margin: 8px 0;
-        border: 2px dashed var(--p);
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-        text-align: center;
-      }
-      .grid b {
-        padding: 7px 0;
-        border-radius: 10px;
-        background: #fff;
-        cursor: pointer;
-        font-size: 13px;
-      }
-      .grid b.on {
-        background: var(--r);
-        color: #fff;
-      }
-      .grid u {
-        display: block;
-        font-size: 9px;
-        text-decoration: none;
-        color: var(--r);
-        min-height: 11px;
-      }
-      .grid .on u {
-        color: #fff;
-      }
-      .dots {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 3px;
-        margin: 6px 0;
-      }
-      .dots a {
-        width: 26px;
-        height: 26px;
-        border-radius: 8px;
-        background: var(--p);
-        font-size: 10px;
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-      }
-      .dots a.on {
-        background: var(--r);
-        color: #fff;
-      }
-      .bar {
-        height: 8px;
-        background: var(--p);
-        border-radius: 6px;
-      }
-      .bar i {
-        display: block;
-        height: 100%;
-        background: var(--g);
-        border-radius: 6px;
-      }
-      .sum {
-        display: flex;
-        gap: 6px;
-        margin: 8px 0;
-      }
-      .sum span {
-        flex: 1;
-        background: #fff;
-        border-radius: 12px;
-        padding: 6px;
-        text-align: center;
-      }
-      .sum b {
-        font-size: 18px;
-      }
-      .tabs {
-        display: flex;
-        gap: 6px;
-      }
-      .tabs button {
-        flex: 1;
-      }
-      .in {
-        color: #2a7a4b;
-      }
-      .out {
-        color: var(--r);
-      }
-      .chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-      .chips button {
-        background: var(--g);
-        border-color: var(--g);
-        color: var(--k);
-      }
-      img {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        object-fit: cover;
-      }
-      .books {
-        display: flex;
-        gap: 12px;
-      }
-      .bk {
-        flex: 1;
-        height: 150px;
-        border-radius: 6px 16px 16px 6px;
-        font-size: 17px;
-        border-width: 0 0 0 12px;
-        border-color: var(--g);
-      }
-      .bk.m {
-        background: #3a2a50;
-      }
-      .book {
-        perspective: 900px;
-        background: var(--r);
-        padding: 10px 10px 10px 18px;
-        border-radius: 6px 14px 14px 6px;
-        margin: 8px 0;
-      }
-      .page {
-        background: #fffdf5
-          repeating-linear-gradient(transparent 0 27px, #ecdcc8 28px);
-        border-radius: 4px 10px 10px 4px;
-        padding: 8px;
-        transform-origin: left center;
-      }
-      .page textarea {
-        border: 0;
-        background: transparent;
-        height: 250px;
-        font:
-          600 20px/28px "Dancing Script",
-          "Brush Script MT",
-          cursive;
-        resize: none;
-        margin: 0;
-      }
-      .f1 {
-        animation: f1 0.55s;
-      }
-      .f2 {
-        animation: f2 0.55s;
-      }
-      @keyframes f1 {
-        from {
-          transform: rotateY(-100deg);
-          opacity: 0.2;
-        }
-      }
-      @keyframes f2 {
-        from {
-          transform: rotateY(80deg);
-          opacity: 0.2;
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .f1,
-        .f2 {
-          animation: none;
-        }
-        .f {
-          transition: none;
-        }
-      }
-      .sheet {
-        box-shadow: inset 0 0 0 2px #d9a93b66;
-      }
-      header button {
-        background: #1b0d12;
-        color: #e8c36a;
-        border-color: #d9a93b;
-      }
-      .gal {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
-        margin-top: 8px;
-      }
-      .tc {
-        background: #fff;
-        border-radius: 14px;
-        border-top: 5px solid;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        box-shadow: 0 2px 0 #00000014;
-      }
-      .tc .row {
-        margin: 0;
-        gap: 6px;
-      }
-      .tt {
-        flex: 1;
-        cursor: pointer;
-        word-break: break-word;
-      }
-      .ck {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        padding: 0;
-        background: #fff;
-        color: var(--r);
-        flex: none;
-      }
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-      .tags em {
-        font-style: normal;
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 20px;
-        background: var(--p);
-      }
-      .tags em.od {
-        background: #c8102e;
-        color: #fff;
-      }
-      .ed {
-        display: grid;
-        gap: 5px;
-        border-top: 1px dashed var(--p);
-        padding-top: 6px;
-      }
-      .ed label {
-        font-size: 12px;
-        flex: 1;
-      }
-      .tabs.sc {
-        overflow-x: auto;
-        margin-bottom: 8px;
-      }
-      .tabs.sc button {
-        flex: none;
-        white-space: nowrap;
-      }
-      button:disabled {
-        opacity: 0.5;
-        cursor: default;
-      }
-      header {
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-      .hb {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .hb button {
-        padding: 4px 10px;
-        font-size: 13px;
-      }
-      .lv {
-        position: relative;
-        overflow: hidden;
-        background: #1b0d12;
-        color: #e8c36a;
-        border: 2px solid #d9a93b;
-        border-radius: 12px;
-        padding: 4px 12px;
-        font-weight: 700;
-      }
-      .lv i {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 3px;
-        background: #e8c36a;
-      }
-      .arr .w {
-        cursor: move;
-        filter: drop-shadow(0 0 3px #e8c36a);
-      }
-      .arr svg {
-        touch-action: none;
-      }
-      .wk {
-        display: flex;
-        gap: 4px;
-        margin: 6px 0;
-      }
-      .wk a {
-        flex: 1;
-        text-align: center;
-        padding: 6px 0;
-        border-radius: 12px;
-        cursor: pointer;
-      }
-      .wk a.on {
-        background: #fff;
-        box-shadow: 0 2px 0 #00000018;
-      }
-      .wk small {
-        display: block;
-        color: #7a6a6f;
-      }
-      .mgrid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-        margin: 6px 0;
-      }
-      .mc {
-        background: #fff;
-        border-radius: 14px;
-        padding: 8px;
-        border: 2px solid var(--p);
-        font-size: 12px;
-      }
-      .mv {
-        font-size: 20px;
-        font-weight: 700;
-      }
-      .mv small {
-        font-size: 12px;
-        margin-left: 2px;
-      }
-      .meal {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin: 6px 0;
-      }
-      .meal img,
-      .em {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        object-fit: cover;
-        background: var(--p);
-        display: grid;
-        place-items: center;
-        font-size: 22px;
-        flex: none;
-      }
-      .chip {
-        display: inline-flex;
-      }
-      .cats {
-        display: flex;
-        gap: 6px;
-        justify-content: space-between;
-      }
-      .cat {
-        background: transparent;
-        border: 0;
-        padding: 2px;
-        transition: transform 0.15s;
-      }
-      .cat.on {
-        transform: translateY(-5px);
-        filter: drop-shadow(0 0 5px #d9a93b);
-      }
-      .fl {
-        font:
-          700 17px "Dancing Script",
-          cursive;
-        color: var(--r);
-        display: block;
-        margin-top: 8px;
-      }
-      .page input,
-      .page textarea {
-        font:
-          600 18px/1.3 "Dancing Script",
-          "Brush Script MT",
-          cursive;
-        background: #fff9;
-        border: 2px solid var(--p);
-        height: auto;
-        resize: vertical;
-      }
-      .sc {
-        overflow-x: auto;
-      }
-      .mt {
-        border-collapse: collapse;
-        font-size: 11px;
-        white-space: nowrap;
-      }
-      .mt td,
-      .mt th {
-        border: 1px solid var(--p);
-        padding: 3px 5px;
-        text-align: right;
-      }
-      .mt td:first-child {
-        text-align: left;
-        font-weight: 700;
-      }
-      .mt .ov {
-        background: #c8102e33;
-      }
-      .mt .bi {
-        width: 54px;
-        padding: 1px 3px;
-        border-width: 1px;
-        font-size: 11px;
-        border-radius: 6px;
-        margin: 0;
-      }
-      .sb {
-        display: flex;
-        height: 12px;
-        border-radius: 6px;
-        overflow: hidden;
-      }
-      .sb i {
-        display: block;
-      }
-      details summary {
-        cursor: pointer;
-        font:
-          700 21px "Dancing Script",
-          cursive;
-        color: var(--r);
-        margin: 10px 0;
-      }
-      .av {
-        display: inline-grid;
-        place-items: center;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: #d9a93b;
-        color: #1b0d12;
-        overflow: hidden;
-        margin-right: 6px;
-        vertical-align: middle;
-        font-size: 12px;
-      }
-      .av img {
-        width: 100%;
-        height: 100%;
-        border-radius: 0;
-      }
-      .av.big {
-        width: 64px;
-        height: 64px;
-        font-size: 28px;
-        margin: 0;
-        flex: none;
-      }
-      .ab {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: calc(14px + env(safe-area-inset-bottom));
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        z-index: 8;
-      }
-      .ab[hidden] {
-        display: none;
-      }
-      .tc.wide {
-        grid-column: 1/-1;
-      }
-      button.s {
-        min-width: 34px;
-        min-height: 34px;
-      }
-      #gear {
-        font-size: 20px;
-        padding: 2px 10px;
-      }
-      .lv {
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>♥ My Wonderland</h1>
-      <div class="hb">
-        <span id="lv" class="lv" onclick="A.open('set')"></span
-        ><button id="gear" onclick="A.open('set')" aria-label="Settings">
-          ⚙
-        </button>
-      </div>
-    </header>
-    <svg viewBox="0 0 400 600" aria-label="Cozy room: tap furniture">
-      <style>
-        .f text.lb {
-          fill: #2b1a22;
-          font:
-            700 17px "Dancing Script",
-            "Brush Script MT",
-            cursive;
-          paint-order: stroke;
-          stroke: #fff;
-          stroke-width: 4px;
-          stroke-linejoin: round;
-        }
-      </style>
-      <defs>
-        <pattern id="st" width="24" height="10" patternUnits="userSpaceOnUse">
-          <rect width="24" height="10" fill="#6b1c2e" />
-          <rect width="12" height="10" fill="#5a1627" />
-        </pattern>
-        <pattern id="ck" width="50" height="50" patternUnits="userSpaceOnUse">
-          <rect width="50" height="50" fill="#f3e6cf" />
-          <rect width="25" height="25" fill="#1b0d12" />
-          <rect x="25" y="25" width="25" height="25" fill="#1b0d12" />
-        </pattern>
-        <pattern id="dg" width="12" height="10" patternUnits="userSpaceOnUse">
-          <rect x="1" y="1" width="9" height="7" rx="2" fill="#f6d5d9" />
-        </pattern>
-        <g id="ro">
-          <circle r="8" fill="#c8102e" />
-          <path
-            d="M-4.5 0a4.5 4.5 0 0 1 9 0a2.8 2.8 0 0 1-5.6 0a1.6 1.6 0 0 1 3.2 0"
-            fill="none"
-            stroke="#6b0f1e"
-            stroke-width="1.3"
-          />
-          <path d="M-9 5l-5 3 6 1zM9 5l5 3-6 1z" fill="#3f7a52" />
-        </g>
-        <path id="h" d="M0 7C-12-3-5-13 0-5 5-13 12-3 0 7Z" />
-      </defs>
-      <rect width="400" height="350" fill="url(#st)" />
-      <rect y="262" width="400" height="76" fill="#22100f" />
-      <rect y="259" width="400" height="6" fill="#d9a93b" />
-      <path d="M0 300h400" stroke="#d9a93b" stroke-width="1" opacity=".5" />
-      <rect y="336" width="400" height="14" fill="#8a1c33" />
-      <rect y="350" width="400" height="250" fill="url(#ck)" />
-      <g id="rs">
-        <use href="#ro" x="24" y="24" fill="#c8102e" stroke="none" />
-        <use href="#h" x="53" y="24" fill="#d9a93b" stroke="none" />
-        <use href="#ro" x="82" y="24" fill="#c8102e" stroke="none" />
-        <use href="#h" x="111" y="24" fill="#d9a93b" stroke="none" />
-        <use href="#ro" x="140" y="24" fill="#c8102e" stroke="none" />
-        <use href="#h" x="169" y="24" fill="#d9a93b" stroke="none" />
-        <use href="#ro" x="198" y="24" fill="#c8102e" stroke="none" />
-        <use href="#h" x="227" y="24" fill="#d9a93b" stroke="none" />
-        <use href="#ro" x="256" y="24" fill="#c8102e" stroke="none" />
-        <use href="#h" x="285" y="24" fill="#d9a93b" stroke="none" />
-        <use href="#ro" x="314" y="24" fill="#c8102e" stroke="none" />
-        <use href="#h" x="343" y="24" fill="#d9a93b" stroke="none" />
-        <use href="#ro" x="372" y="24" fill="#c8102e" stroke="none" />
-      </g>
-      <path
-        d="M10 34Q105 48 200 34T390 34"
-        fill="none"
-        stroke="#d9a93b"
-        stroke-width="1.5"
-      />
-      <g stroke="#1b0d12" stroke-width="2.5" stroke-linejoin="round">
-        <g>
-          <rect x="178" y="56" width="92" height="104" rx="4" fill="#cfe8f0" />
-          <ellipse cx="206" cy="84" rx="16" ry="7" fill="#fff" stroke="none" />
-          <ellipse cx="240" cy="108" rx="14" ry="6" fill="#fff" stroke="none" />
-          <path
-            d="M224 56v104M178 108h92"
-            fill="none"
-            stroke="#fff3e0"
-            stroke-width="5"
-          />
-          <path
-            d="M172 54h26l-6 104h-20zM276 54h-26l6 104h20z"
-            fill="#b32642"
-          />
-          <path d="M166 50h118" stroke="#d9a93b" stroke-width="4" />
-          <rect x="172" y="160" width="104" height="7" rx="2" fill="#fff3e0" />
-        </g>
-        <ellipse cx="210" cy="448" rx="124" ry="38" fill="#b32642" />
-        <ellipse
-          cx="210"
-          cy="448"
-          rx="108"
-          ry="30"
-          fill="none"
-          stroke="#d9a93b"
-        />
-        <g transform="translate(300 0)">
-          <path d="M22 478h36" stroke="none" />
-          <ellipse cx="42" cy="478" rx="14" ry="5" fill="#7a1f2e" />
-          <path d="M42 478V404" fill="none" stroke="#7a1f2e" stroke-width="4" />
-          <path d="M24 404l8-28h20l8 28z" fill="#d9a93b" />
-        </g>
-        <g transform="translate(-300 0)">
-          <path d="M340 446h30l-4 26h-22z" fill="#b32642" />
-          <g fill="#6aa57a">
-            <ellipse
-              cx="348"
-              cy="428"
-              rx="7"
-              ry="17"
-              transform="rotate(-25 348 428)"
-            />
-            <ellipse
-              cx="362"
-              cy="426"
-              rx="7"
-              ry="17"
-              transform="rotate(25 362 426)"
-            />
-            <ellipse cx="355" cy="420" rx="6" ry="18" />
-          </g>
-        </g>
-        <g class="w" data-k="cal" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('cal')"
-            role="button"
-            tabindex="0"
-            aria-label="Calendar"
-          >
-            <g class="fb">
-              <path d="M60 40v12" fill="none" stroke="#d9a93b" />
-              <rect x="22" y="52" width="76" height="90" rx="6" fill="#fff" />
-              <path
-                d="M22 74V58a6 6 0 0 1 6-6h64a6 6 0 0 1 6 6v16z"
-                fill="#b32642"
-              />
-              <circle cx="42" cy="52" r="3.5" fill="#d9a93b" />
-              <circle cx="78" cy="52" r="3.5" fill="#d9a93b" />
-              <rect
-                x="28"
-                y="80"
-                width="64"
-                height="54"
-                fill="url(#dg)"
-                stroke="none"
-              />
-              <use href="#h" x="66" y="108" fill="#b32642" stroke="none" />
-            </g>
-            <image
-              href="assets/calendar.png"
-              x="18"
-              y="40"
-              width="84"
-              height="106"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="60" y="162" text-anchor="middle">Calendar</text>
-          </g>
-        </g>
-        <g class="w" data-k="hab" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('hab')"
-            role="button"
-            tabindex="0"
-            aria-label="Habit board"
-          >
-            <g class="fb">
-              <rect
-                x="280"
-                y="46"
-                width="104"
-                height="92"
-                rx="6"
-                fill="#a8742f"
-              />
-              <rect
-                x="287"
-                y="53"
-                width="90"
-                height="78"
-                rx="3"
-                fill="#ecc98e"
-              />
-              <rect
-                x="294"
-                y="60"
-                width="36"
-                height="30"
-                fill="#ffd0dc"
-                transform="rotate(-5 312 75)"
-              />
-              <rect
-                x="336"
-                y="62"
-                width="34"
-                height="30"
-                fill="#fff2a8"
-                transform="rotate(4 353 77)"
-              />
-              <rect
-                x="310"
-                y="96"
-                width="40"
-                height="28"
-                fill="#c7ecee"
-                transform="rotate(-2 330 110)"
-              />
-              <g fill="#b32642" stroke="none">
-                <circle cx="312" cy="62" r="3" />
-                <circle cx="353" cy="64" r="3" />
-                <circle cx="330" cy="98" r="3" />
-              </g>
-              <path
-                d="M300 74h18M300 80h12M344 76h18M344 82h10M318 108h22"
-                stroke="#8a6a3a"
-                stroke-width="1.5"
-                fill="none"
-              />
-            </g>
-            <image
-              href="assets/habits.png"
-              x="278"
-              y="40"
-              width="108"
-              height="100"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="332" y="154" text-anchor="middle">Habits</text>
-          </g>
-        </g>
-        <g class="w" data-k="book" data-b="276 0">
-          <g
-            class="f"
-            onclick="A.open('book')"
-            role="button"
-            tabindex="0"
-            aria-label="Bookshelf"
-          >
-            <g class="fb">
-              <rect
-                x="12"
-                y="176"
-                width="100"
-                height="188"
-                rx="5"
-                fill="#7a1f2e"
-              />
-              <g stroke="none" fill="#4a1220">
-                <rect x="19" y="184" width="86" height="52" />
-                <rect x="19" y="244" width="86" height="52" />
-                <rect x="19" y="304" width="86" height="52" />
-              </g>
-              <g stroke-width="1.5">
-                <rect x="24" y="196" width="10" height="40" fill="#f6d5d9" />
-                <rect x="36" y="190" width="12" height="46" fill="#d9a93b" />
-                <rect x="50" y="200" width="10" height="36" fill="#fff3e0" />
-                <rect x="62" y="192" width="14" height="44" fill="#b32642" />
-                <rect x="80" y="198" width="10" height="38" fill="#3a2a50" />
-                <rect x="24" y="248" width="14" height="48" fill="#d9a93b" />
-                <rect x="40" y="256" width="10" height="40" fill="#fff3e0" />
-                <rect x="52" y="250" width="12" height="46" fill="#f6d5d9" />
-                <rect x="68" y="282" width="30" height="7" fill="#b32642" />
-                <rect x="70" y="289" width="28" height="7" fill="#d9a93b" />
-                <rect x="26" y="316" width="30" height="40" fill="#3a2a50" />
-                <use href="#h" x="41" y="334" fill="#d9a93b" stroke="none" />
-                <rect x="60" y="310" width="12" height="46" fill="#f6d5d9" />
-                <rect x="76" y="320" width="10" height="36" fill="#fff3e0" />
-              </g>
-              <path d="M44 176v-11h16v11z" fill="#fff3e0" />
-              <use href="#h" x="52" y="171" fill="#b32642" stroke="none" />
-            </g>
-            <image
-              href="assets/bookshelf.png"
-              x="10"
-              y="164"
-              width="104"
-              height="200"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="62" y="382" text-anchor="middle">Journal</text>
-          </g>
-        </g>
-        <g class="w" data-k="safe" data-b="4 0">
-          <g
-            class="f"
-            onclick="A.open('safe')"
-            role="button"
-            tabindex="0"
-            aria-label="Safe box"
-          >
-            <g class="fb">
-              <rect
-                x="116"
-                y="322"
-                width="48"
-                height="44"
-                rx="5"
-                fill="#3a2a30"
-                stroke="#d9a93b"
-              />
-              <circle cx="138" cy="344" r="12" fill="#d9a93b" />
-              <use href="#h" x="138" y="341" fill="#3a2a30" stroke="none" />
-              <rect
-                x="153"
-                y="338"
-                width="5"
-                height="12"
-                fill="#d9a93b"
-                stroke="none"
-              />
-            </g>
-            <image
-              href="assets/safe.png"
-              x="112"
-              y="316"
-              width="56"
-              height="52"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="140" y="384" text-anchor="middle">Safe</text>
-          </g>
-        </g>
-        <g class="w" data-k="food" data-b="-272 0">
-          <g
-            class="f"
-            onclick="A.open('food')"
-            role="button"
-            tabindex="0"
-            aria-label="Fridge"
-          >
-            <g class="fb">
-              <rect
-                x="292"
-                y="178"
-                width="94"
-                height="186"
-                rx="12"
-                fill="#fff7ef"
-              />
-              <path d="M292 246h94" fill="none" />
-              <rect
-                x="300"
-                y="196"
-                width="5"
-                height="38"
-                rx="2"
-                fill="#d9a93b"
-              />
-              <rect
-                x="300"
-                y="258"
-                width="5"
-                height="52"
-                rx="2"
-                fill="#d9a93b"
-              />
-              <use href="#h" x="350" y="214" fill="#b32642" stroke="none" />
-              <use href="#h" x="368" y="284" fill="#d9a93b" stroke="none" />
-              <rect
-                x="326"
-                y="262"
-                width="30"
-                height="24"
-                fill="#f6d5d9"
-                transform="rotate(-6 341 274)"
-                stroke-width="1.5"
-              />
-            </g>
-            <image
-              href="assets/fridge.png"
-              x="288"
-              y="170"
-              width="102"
-              height="196"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="339" y="382" text-anchor="middle">Fridge</text>
-          </g>
-        </g>
-        <g class="w" data-k="task" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('task')"
-            role="button"
-            tabindex="0"
-            aria-label="Tasks desk"
-          >
-            <g class="fb">
-              <rect x="172" y="340" width="114" height="34" fill="#7a1f2e" />
-              <path d="M229 340v34" fill="none" />
-              <circle cx="200" cy="357" r="3.5" fill="#d9a93b" />
-              <circle cx="258" cy="357" r="3.5" fill="#d9a93b" />
-              <rect
-                x="166"
-                y="328"
-                width="126"
-                height="12"
-                rx="4"
-                fill="#9a2f44"
-              />
-              <rect
-                x="190"
-                y="268"
-                width="76"
-                height="54"
-                rx="5"
-                fill="#2b1a22"
-              />
-              <rect
-                x="196"
-                y="274"
-                width="64"
-                height="40"
-                rx="2"
-                fill="#f6d5d9"
-                stroke="none"
-              />
-              <use href="#h" x="228" y="292" fill="#b32642" stroke="none" />
-              <rect
-                x="204"
-                y="321"
-                width="48"
-                height="7"
-                rx="2"
-                fill="#fff3e0"
-                stroke-width="1.5"
-              />
-              <rect
-                x="268"
-                y="316"
-                width="10"
-                height="12"
-                rx="2"
-                fill="#fff3e0"
-                stroke-width="1.5"
-              />
-              <rect
-                x="209"
-                y="382"
-                width="40"
-                height="26"
-                rx="12"
-                fill="#b32642"
-              />
-              <use href="#h" x="229" y="389" fill="#fff3e0" stroke="none" />
-              <ellipse cx="229" cy="416" rx="26" ry="9" fill="#fff3e0" />
-              <path d="M229 424v8" fill="none" />
-              <ellipse cx="229" cy="434" rx="16" ry="4" fill="#7a1f2e" />
-            </g>
-            <image
-              href="assets/desk.png"
-              x="166"
-              y="262"
-              width="126"
-              height="176"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="229" y="456" text-anchor="middle">Tasks</text>
-          </g>
-        </g>
-        <g class="w" data-k="timer" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('timer')"
-            role="button"
-            tabindex="0"
-            aria-label="Timer"
-          >
-            <g class="fb">
-              <circle
-                cx="136"
-                cy="84"
-                r="25"
-                fill="#fff3e0"
-                stroke="#d9a93b"
-                stroke-width="5"
-              />
-              <path
-                d="M136 68v16l10 6"
-                fill="none"
-                stroke-width="3"
-                stroke-linecap="round"
-              />
-              <circle cx="136" cy="84" r="2.5" fill="#b32642" stroke="none" />
-            </g>
-            <image
-              href="assets/timer.png"
-              x="108"
-              y="56"
-              width="56"
-              height="56"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="136" y="126" text-anchor="middle">Timer</text>
-          </g>
-        </g>
-        <g class="w" data-k="radio" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('radio')"
-            role="button"
-            tabindex="0"
-            aria-label="Radio"
-          >
-            <g class="fb">
-              <path d="M88 516l14-22" fill="none" stroke="#d9a93b" />
-              <rect
-                x="28"
-                y="516"
-                width="70"
-                height="44"
-                rx="8"
-                fill="#b32642"
-              />
-              <circle cx="50" cy="538" r="13" fill="#7a1f2e" />
-              <path
-                d="M44 534h12M44 539h12M44 544h12"
-                stroke="#d9a93b"
-                stroke-width="1.5"
-                fill="none"
-              />
-              <rect
-                x="68"
-                y="524"
-                width="22"
-                height="10"
-                rx="2"
-                fill="#fff3e0"
-                stroke-width="1.5"
-              />
-              <circle
-                cx="74"
-                cy="548"
-                r="4"
-                fill="#d9a93b"
-                stroke-width="1.5"
-              />
-              <circle
-                cx="87"
-                cy="548"
-                r="4"
-                fill="#d9a93b"
-                stroke-width="1.5"
-              />
-            </g>
-            <image
-              href="assets/radio.png"
-              x="24"
-              y="490"
-              width="80"
-              height="74"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="63" y="584" text-anchor="middle">Radio</text>
-          </g>
-        </g>
-        <g class="w" data-k="tv" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('tv')"
-            role="button"
-            tabindex="0"
-            aria-label="TV"
-          >
-            <g class="fb">
-              <path
-                d="M185 498l-14-18M215 498l14-18"
-                fill="none"
-                stroke="#d9a93b"
-              />
-              <rect
-                x="150"
-                y="498"
-                width="100"
-                height="62"
-                rx="8"
-                fill="#2b1218"
-              />
-              <rect
-                x="158"
-                y="506"
-                width="84"
-                height="46"
-                rx="4"
-                fill="#f6d5d9"
-                stroke-width="1.5"
-              />
-              <use href="#h" x="200" y="526" fill="#b32642" stroke="none" />
-              <rect
-                x="170"
-                y="560"
-                width="60"
-                height="9"
-                rx="3"
-                fill="#7a1f2e"
-              />
-            </g>
-            <image
-              href="assets/tv.png"
-              x="146"
-              y="474"
-              width="108"
-              height="98"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="200" y="590" text-anchor="middle">TV</text>
-          </g>
-        </g>
-        <g class="w" data-k="mani" data-b="0 0">
-          <g
-            class="f"
-            onclick="A.open('mani')"
-            role="button"
-            tabindex="0"
-            aria-label="Manifest corner"
-          >
-            <g class="fb">
-              <path d="M335 548v26M315 575h40" fill="none" stroke-width="4" />
-              <ellipse cx="335" cy="542" rx="46" ry="10" fill="#3a2a50" />
-              <circle cx="335" cy="520" r="17" fill="#cfe8f0" />
-              <text
-                x="335"
-                y="527"
-                text-anchor="middle"
-                stroke="none"
-                fill="#7a1f2e"
-                font-size="20"
-              >
-                ✦
-              </text>
-              <rect
-                x="294"
-                y="516"
-                width="8"
-                height="24"
-                fill="#fff3e0"
-                stroke-width="1.5"
-              />
-              <ellipse
-                cx="298"
-                cy="511"
-                rx="3"
-                ry="5"
-                fill="#d9a93b"
-                stroke="none"
-              />
-              <rect
-                x="358"
-                y="532"
-                width="26"
-                height="10"
-                fill="#fff3e0"
-                stroke-width="1.5"
-              />
-            </g>
-            <image
-              href="assets/manifest.png"
-              x="290"
-              y="496"
-              width="100"
-              height="84"
-              preserveAspectRatio="xMidYMax meet"
-              visibility="hidden"
-              onload="
-                this.setAttribute('visibility', 'visible');
-                this.parentNode.querySelector('.fb').style.display = 'none';
-              "
-            />
-            <text class="lb" x="337" y="594" text-anchor="middle">
-              Manifest
-            </text>
-          </g>
-        </g>
-      </g>
-      <g fill="none" stroke="#d9a93b" pointer-events="none">
-        <rect x="3" y="3" width="394" height="594" rx="8" stroke-width="3" />
-        <rect x="8" y="8" width="384" height="584" rx="5" opacity=".6" />
-      </g>
-      <g fill="#d9a93b" pointer-events="none">
-        <path
-          d="M3 3l12 0-12 12zM397 3l-12 0 12 12zM3 597l12 0-12-12zM397 597l-12 0 12-12z"
-        />
-      </g>
-    </svg>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#a8203a"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@500;600;700&family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Heartslabyul Room</title>
+<style>
+:root{--r:#a8203a;--c:#fff3e0;--g:#d9a93b;--k:#2b1a22;--p:#f6d5d9}
+*{box-sizing:border-box}
+body{margin:0;background:#2b1218;color:var(--k);font:14px/1.45 Mali,Quicksand,ui-rounded,"Trebuchet MS",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);display:flex;flex-direction:column;align-items:center;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:var(--bg,none);background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;filter:brightness(.55)}
+header{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+h1{font:700 32px "Dancing Script",Mali,"Brush Script MT",cursive;color:#e8c36a;margin:0}
+body>svg{width:100%;max-width:520px;height:auto;display:block}
+.f{cursor:pointer;transition:transform .15s}.f:hover,.f:focus{transform:translateY(-3px);outline:none}
+.f text{font:700 11px ui-rounded,sans-serif;fill:#fff;pointer-events:none}
+#m{position:fixed;inset:0;background:#2b1a2299;display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));z-index:9}
+#m[hidden]{display:none}
+.sheet{background:var(--c);width:100%;max-width:560px;max-height:100%;overflow:auto;border-radius:22px;border:3px solid var(--g);padding:14px;animation:pop .22s ease-out}
+.sheet>div:first-child{display:flex;justify-content:space-between;align-items:center}
+h3{margin:0;font:700 28px "Dancing Script",Mali,"Brush Script MT",cursive;color:var(--r)}h4{margin:14px 0 6px;font:700 21px "Dancing Script",Mali,"Brush Script MT",cursive;color:var(--r)}
+button,input,select,textarea{font:inherit;border:2px solid var(--r);border-radius:12px;padding:8px 10px;background:#fff;color:var(--k);min-width:0}
+button{background:var(--r);color:#fff;cursor:pointer;font-weight:700}button:active{transform:scale(.96)}
+button.s{padding:2px 8px;background:#fff;color:var(--r);margin-left:4px}
+button.on{background:var(--g);border-color:var(--g);color:var(--k)}
+input,select,textarea{width:100%;margin:3px 0}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:5px 0}.row>input,.row>select{flex:1}
+.card{background:#fff;border-radius:14px;padding:10px;margin:8px 0;border:2px dashed var(--p)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.grid b{padding:7px 0;border-radius:10px;background:#fff;cursor:pointer;font-size:13px}.grid b.on{background:var(--r);color:#fff}
+.grid u{display:block;font-size:9px;text-decoration:none;color:var(--r);min-height:11px}.grid .on u{color:#fff}
+.dots{display:flex;flex-wrap:wrap;gap:3px;margin:6px 0}.dots a{width:26px;height:26px;border-radius:8px;background:var(--p);font-size:10px;display:grid;place-items:center;cursor:pointer}.dots a.on{background:var(--r);color:#fff}
+.bar{height:8px;background:var(--p);border-radius:6px}.bar i{display:block;height:100%;background:var(--g);border-radius:6px}
+.sum{display:flex;gap:6px;margin:8px 0}.sum span{flex:1;background:#fff;border-radius:12px;padding:6px;text-align:center}.sum b{font-size:18px}
+.tabs{display:flex;gap:6px}.tabs button{flex:1}.in{color:#2a7a4b}.out{color:var(--r)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{background:var(--g);border-color:var(--g);color:var(--k)}
+img{width:44px;height:44px;border-radius:10px;object-fit:cover}
+.books{display:flex;gap:12px}.bk{flex:1;height:150px;border-radius:6px 16px 16px 6px;font-size:17px;border-width:0 0 0 12px;border-color:var(--g)}.bk.m{background:#3a2a50}
+.book{perspective:900px;background:var(--r);padding:10px 10px 10px 18px;border-radius:6px 14px 14px 6px;margin:8px 0}
+.page{background:#fffdf5 repeating-linear-gradient(transparent 0 27px,#ecdcc8 28px);border-radius:4px 10px 10px 4px;padding:8px;transform-origin:left center}
+.page textarea{border:0;background:transparent;height:250px;font:600 20px/28px "Dancing Script",Mali,"Brush Script MT",cursive;resize:none;margin:0}
+.f1{animation:f1 .55s}.f2{animation:f2 .55s}
+@keyframes f1{from{transform:rotateY(-100deg);opacity:.2}}@keyframes f2{from{transform:rotateY(80deg);opacity:.2}}
+@media(prefers-reduced-motion:reduce){.f1,.f2{animation:none}.f{transition:none}}
+.sheet{box-shadow:inset 0 0 0 2px #d9a93b66}header button{background:#1b0d12;color:#e8c36a;border-color:#d9a93b}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}.tc{background:#fff;border-radius:14px;border-top:5px solid;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 0 #00000014}.tc .row{margin:0;gap:6px}.tt{flex:1;cursor:pointer;word-break:break-word}.ck{width:28px;height:28px;border-radius:50%;padding:0;background:#fff;color:var(--r);flex:none}.tags{display:flex;flex-wrap:wrap;gap:4px}.tags em{font-style:normal;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--p)}.tags em.od{background:#c8102e;color:#fff}.ed{display:grid;gap:5px;border-top:1px dashed var(--p);padding-top:6px}.ed label{font-size:12px;flex:1}.tabs.sc{overflow-x:auto;margin-bottom:8px}.tabs.sc button{flex:none;white-space:nowrap}button:disabled{opacity:.5;cursor:default}
+header{flex-wrap:wrap;gap:6px}.hb{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.hb button{padding:4px 10px;font-size:13px}.lv{position:relative;overflow:hidden;background:#1b0d12;color:#e8c36a;border:2px solid #d9a93b;border-radius:12px;padding:4px 12px;font-weight:700}.lv i{position:absolute;left:0;bottom:0;height:3px;background:#e8c36a}.arr .w{cursor:move;filter:drop-shadow(0 0 3px #e8c36a)}.arr svg{touch-action:none}
+.wk{display:flex;gap:4px;margin:6px 0}.wk a{flex:1;text-align:center;padding:6px 0;border-radius:12px;cursor:pointer}.wk a.on{background:#fff;box-shadow:0 2px 0 #00000018}.wk small{display:block;color:#7a6a6f}.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0}.mc{background:#fff;border-radius:14px;padding:8px;border:2px solid var(--p);font-size:12px}.mv{font-size:20px;font-weight:700}.mv small{font-size:12px;margin-left:2px}.meal{display:flex;gap:10px;align-items:center;margin:6px 0}.meal img,.em{width:48px;height:48px;border-radius:12px;object-fit:cover;background:var(--p);display:grid;place-items:center;font-size:22px;flex:none}.chip{display:inline-flex}.cats{display:flex;gap:6px;justify-content:space-between}.cat{background:transparent;border:0;padding:2px;transition:transform .15s}.cat.on{transform:translateY(-5px);filter:drop-shadow(0 0 5px #d9a93b)}.fl{font:700 17px "Dancing Script",Mali,cursive;color:var(--r);display:block;margin-top:8px}.page input,.page textarea{font:600 18px/1.3 "Dancing Script",Mali,"Brush Script MT",cursive;background:#fff9;border:2px solid var(--p);height:auto;resize:vertical}.sc{overflow-x:auto}.mt{border-collapse:collapse;font-size:11px;white-space:nowrap}.mt td,.mt th{border:1px solid var(--p);padding:3px 5px;text-align:right}.mt td:first-child{text-align:left;font-weight:700}.mt .ov{background:#c8102e33}.mt .bi{width:54px;padding:1px 3px;border-width:1px;font-size:11px;border-radius:6px;margin:0}.sb{display:flex;height:12px;border-radius:6px;overflow:hidden}.sb i{display:block}details summary{cursor:pointer;font:700 21px "Dancing Script",Mali,cursive;color:var(--r);margin:10px 0}
+.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#d9a93b;color:#1b0d12;overflow:hidden;margin-right:6px;vertical-align:middle;font-size:12px}.av img{width:100%;height:100%;border-radius:0}.av.big{width:64px;height:64px;font-size:28px;margin:0;flex:none}.ab{position:fixed;left:0;top:0;width:calc(100% - 24px);max-width:520px;background:#fff3e0;border:2px solid #d9a93b;border-radius:14px;padding:6px;z-index:10;box-shadow:0 4px 18px #0007;display:flex;flex-direction:column;gap:5px}.ab[hidden]{display:none}
+#dockhead{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:grab;touch-action:none;user-select:none;font-weight:700;color:var(--r);padding:2px 4px}#dockhead:active{cursor:grabbing}#dockhead small{font-weight:400;color:#7a6a6f;font-size:10px}
+#dockbar{display:flex;gap:8px;justify-content:center}
+#sz{background:#fff;border:1px dashed #d9a93b;border-radius:10px;padding:5px;display:flex;flex-direction:column;gap:4px;color:var(--k);font-size:12px}
+#sz[hidden]{display:none}#sz>div{display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:center}#sz button.s{min-width:30px;min-height:30px;font-size:12px}#sz select{width:auto;margin:0;padding:3px;font-size:12px}#sz .szh{font-weight:700;color:var(--r)}.tc.wide{grid-column:1/-1}button.s{min-width:34px;min-height:34px}#gear{font-size:20px;padding:2px 10px}.lv{cursor:pointer}
+.sch{width:100%;border-collapse:collapse;margin:6px 0}.sch td{border:1px solid #d9a93b88;padding:0;background:#fff}.sch td:first-child{width:78px;font-size:11px;padding:4px;text-align:center}.sch input{border:0;border-radius:0;margin:0;background:transparent}.drops{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.drop{background:#fff;border:2px solid #4b8bb3;opacity:.35;padding:2px 6px;font-size:16px;border-radius:10px}.drop.on{opacity:1;background:#d7ecf6}.page input,.page textarea,.ed input,.ed textarea{font-family:Mali,"Dancing Script",cursive;font-weight:500;font-size:15px}input[type=range]{padding:0;border:0;background:transparent}
+.pl{font-size:13px}.pl button.s{min-width:28px;min-height:28px;padding:0 6px}.pl .grid{gap:2px}.pl .grid b{padding:3px 0;border-radius:6px;font-size:12px;font-weight:600}.pl .grid u{font-size:8px;min-height:9px}.pl .grid small{color:#7a6a6f;font-size:10px}.pl h5{margin:12px 0 3px;font:700 11px Mali,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--r)}
+.pl .ph{display:flex;justify-content:space-between;align-items:center;border:1px solid #d9a93b;margin:10px 0 0;padding:3px 8px;font-size:11px;letter-spacing:.1em;font-weight:700}.pl .ph i{font-style:normal;display:inline-block;width:16px;text-align:center;border-radius:50%}.pl .ph i.on{background:var(--r);color:#fff}
+.pl .pln{display:grid;grid-template-columns:1.2fr 1fr;gap:12px}.pl .sch{margin:0}.pl .sch td{height:26px;border-color:#d9a93b66;background:transparent}.pl .sch td:first-child{width:58px;font-size:10px;padding:0 2px;letter-spacing:.04em}.pl .sch input{padding:2px 5px;font-size:12.5px;height:26px}
+.pl .row{margin:0}.pl .row input[type=checkbox]{width:14px;height:14px;accent-color:#a8203a;flex:none}.pl .row input:not([type=checkbox]){border:0;border-bottom:1px solid #d9a93b88;border-radius:0;padding:5px 2px;margin:0;background:transparent;font-size:12.5px}
+.pl textarea{border:1px solid #d9a93b88;border-radius:4px;padding:5px;background:transparent;font-size:12.5px;margin:0}
+.pl .grid b{position:relative;padding:3px 0 5px}.pl .grid u{position:absolute;left:0;right:0;bottom:0;min-height:0;line-height:8px}.pl .ph i{margin-left:3px;letter-spacing:0}.pl .ph span:last-child{letter-spacing:0}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0}.hc{margin:0;padding:8px}.hh{display:flex;gap:6px;align-items:flex-start}.hh b{flex:1;font-size:13px;line-height:1.25;word-break:break-word;padding-top:2px}.hc .dots{gap:2px;margin:6px 0}.hc .dots a{width:17px;height:17px;border-radius:5px;font-size:8px}.hc .row{margin:0}.hc small{font-size:11px}.hc button.s{min-width:26px;min-height:26px;padding:0 4px;margin-left:2px}.hc.wide{grid-column:1/-1}
+@keyframes pop{from{transform:scale(.92);opacity:0}}.sheet>div:first-child{position:sticky;top:-14px;z-index:3;background:var(--c);padding:4px 0 6px;margin-top:-4px}@media(prefers-reduced-motion:reduce){.sheet{animation:none}}
+</style></head><body>
+<header><h1>♥ My Wonderland</h1><div class="hb"><span id="lv" class="lv" onclick="A.open('set')"></span><button id="gear" onclick="A.open('set')" aria-label="Settings">⚙</button></div></header>
+<svg viewBox="0 0 400 600" aria-label="Cozy room: tap furniture">
+<style>.f text.lb{fill:#2b1a22;font:700 17px "Dancing Script",Mali,"Brush Script MT",cursive;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}</style>
+<defs><pattern id="st" width="24" height="10" patternUnits="userSpaceOnUse"><rect width="24" height="10" fill="#6b1c2e"/><rect width="12" height="10" fill="#5a1627"/></pattern>
+<pattern id="ck" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="#f3e6cf"/><rect width="25" height="25" fill="#1b0d12"/><rect x="25" y="25" width="25" height="25" fill="#1b0d12"/></pattern>
+<pattern id="dg" width="12" height="10" patternUnits="userSpaceOnUse"><rect x="1" y="1" width="9" height="7" rx="2" fill="#f6d5d9"/></pattern>
+<g id="ro"><circle r="8" fill="#c8102e"/><path d="M-4.5 0a4.5 4.5 0 0 1 9 0a2.8 2.8 0 0 1-5.6 0a1.6 1.6 0 0 1 3.2 0" fill="none" stroke="#6b0f1e" stroke-width="1.3"/><path d="M-9 5l-5 3 6 1zM9 5l5 3-6 1z" fill="#3f7a52"/></g><path id="h" d="M0 7C-12-3-5-13 0-5 5-13 12-3 0 7Z"/></defs>
+<rect width="400" height="350" fill="url(#st)"/><rect y="262" width="400" height="76" fill="#22100f"/><rect y="259" width="400" height="6" fill="#d9a93b"/><path d="M0 300h400" stroke="#d9a93b" stroke-width="1" opacity=".5"/><rect y="336" width="400" height="14" fill="#8a1c33"/>
+<rect y="350" width="400" height="250" fill="url(#ck)"/>
+<g id="rs"><use href="#ro" x="24" y="24" fill="#c8102e" stroke="none"/><use href="#h" x="53" y="24" fill="#d9a93b" stroke="none"/><use href="#ro" x="82" y="24" fill="#c8102e" stroke="none"/><use href="#h" x="111" y="24" fill="#d9a93b" stroke="none"/><use href="#ro" x="140" y="24" fill="#c8102e" stroke="none"/><use href="#h" x="169" y="24" fill="#d9a93b" stroke="none"/><use href="#ro" x="198" y="24" fill="#c8102e" stroke="none"/><use href="#h" x="227" y="24" fill="#d9a93b" stroke="none"/><use href="#ro" x="256" y="24" fill="#c8102e" stroke="none"/><use href="#h" x="285" y="24" fill="#d9a93b" stroke="none"/><use href="#ro" x="314" y="24" fill="#c8102e" stroke="none"/><use href="#h" x="343" y="24" fill="#d9a93b" stroke="none"/><use href="#ro" x="372" y="24" fill="#c8102e" stroke="none"/></g><path d="M10 34Q105 48 200 34T390 34" fill="none" stroke="#d9a93b" stroke-width="1.5"/>
+<g stroke="#1b0d12" stroke-width="2.5" stroke-linejoin="round">
+<g class="w" data-k="cal" data-b="0 0"><g class="f" onclick="A.open('cal')" role="button" tabindex="0" aria-label="Calendar"><g class="fb"><path d="M60 40v12" fill="none" stroke="#d9a93b"/><rect x="22" y="52" width="76" height="90" rx="6" fill="#fff"/><path d="M22 74V58a6 6 0 0 1 6-6h64a6 6 0 0 1 6 6v16z" fill="#b32642"/><circle cx="42" cy="52" r="3.5" fill="#d9a93b"/><circle cx="78" cy="52" r="3.5" fill="#d9a93b"/><rect x="28" y="80" width="64" height="54" fill="url(#dg)" stroke="none"/><use href="#h" x="66" y="108" fill="#b32642" stroke="none"/></g><image href="assets/calendar.png" x="18" y="40" width="84" height="106" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="60" y="162" text-anchor="middle">Calendar</text></g></g>
+<g class="w" data-k="hab" data-b="0 0"><g class="f" onclick="A.open('hab')" role="button" tabindex="0" aria-label="Habit board"><g class="fb"><rect x="280" y="46" width="104" height="92" rx="6" fill="#a8742f"/><rect x="287" y="53" width="90" height="78" rx="3" fill="#ecc98e"/><rect x="294" y="60" width="36" height="30" fill="#ffd0dc" transform="rotate(-5 312 75)"/><rect x="336" y="62" width="34" height="30" fill="#fff2a8" transform="rotate(4 353 77)"/><rect x="310" y="96" width="40" height="28" fill="#c7ecee" transform="rotate(-2 330 110)"/><g fill="#b32642" stroke="none"><circle cx="312" cy="62" r="3"/><circle cx="353" cy="64" r="3"/><circle cx="330" cy="98" r="3"/></g><path d="M300 74h18M300 80h12M344 76h18M344 82h10M318 108h22" stroke="#8a6a3a" stroke-width="1.5" fill="none"/></g><image href="assets/habits.png" x="278" y="40" width="108" height="100" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="332" y="154" text-anchor="middle">Habits</text></g></g>
+<g class="w" data-k="book" data-b="276 0"><g class="f" onclick="A.open('book')" role="button" tabindex="0" aria-label="Bookshelf"><g class="fb"><rect x="12" y="176" width="100" height="188" rx="5" fill="#7a1f2e"/><g stroke="none" fill="#4a1220"><rect x="19" y="184" width="86" height="52"/><rect x="19" y="244" width="86" height="52"/><rect x="19" y="304" width="86" height="52"/></g><g stroke-width="1.5"><rect x="24" y="196" width="10" height="40" fill="#f6d5d9"/><rect x="36" y="190" width="12" height="46" fill="#d9a93b"/><rect x="50" y="200" width="10" height="36" fill="#fff3e0"/><rect x="62" y="192" width="14" height="44" fill="#b32642"/><rect x="80" y="198" width="10" height="38" fill="#3a2a50"/><rect x="24" y="248" width="14" height="48" fill="#d9a93b"/><rect x="40" y="256" width="10" height="40" fill="#fff3e0"/><rect x="52" y="250" width="12" height="46" fill="#f6d5d9"/><rect x="68" y="282" width="30" height="7" fill="#b32642"/><rect x="70" y="289" width="28" height="7" fill="#d9a93b"/><rect x="26" y="316" width="30" height="40" fill="#3a2a50"/><use href="#h" x="41" y="334" fill="#d9a93b" stroke="none"/><rect x="60" y="310" width="12" height="46" fill="#f6d5d9"/><rect x="76" y="320" width="10" height="36" fill="#fff3e0"/></g><path d="M44 176v-11h16v11z" fill="#fff3e0"/><use href="#h" x="52" y="171" fill="#b32642" stroke="none"/></g><image href="assets/bookshelf.png" x="10" y="164" width="104" height="200" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="62" y="382" text-anchor="middle">Journal</text></g></g>
+<g class="w" data-k="safe" data-b="4 0"><g class="f" onclick="A.open('safe')" role="button" tabindex="0" aria-label="Safe box"><g class="fb"><rect x="116" y="322" width="48" height="44" rx="5" fill="#3a2a30" stroke="#d9a93b"/><circle cx="138" cy="344" r="12" fill="#d9a93b"/><use href="#h" x="138" y="341" fill="#3a2a30" stroke="none"/><rect x="153" y="338" width="5" height="12" fill="#d9a93b" stroke="none"/></g><image href="assets/safe.png" x="112" y="316" width="56" height="52" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="140" y="384" text-anchor="middle">Safe</text></g></g>
+<g class="w" data-k="food" data-b="-272 0"><g class="f" onclick="A.open('food')" role="button" tabindex="0" aria-label="Fridge"><g class="fb"><rect x="292" y="178" width="94" height="186" rx="12" fill="#fff7ef"/><path d="M292 246h94" fill="none"/><rect x="300" y="196" width="5" height="38" rx="2" fill="#d9a93b"/><rect x="300" y="258" width="5" height="52" rx="2" fill="#d9a93b"/><use href="#h" x="350" y="214" fill="#b32642" stroke="none"/><use href="#h" x="368" y="284" fill="#d9a93b" stroke="none"/><rect x="326" y="262" width="30" height="24" fill="#f6d5d9" transform="rotate(-6 341 274)" stroke-width="1.5"/></g><image href="assets/fridge.png" x="288" y="170" width="102" height="196" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="339" y="382" text-anchor="middle">Fridge</text></g></g>
+<g class="w" data-k="task" data-b="0 0"><g class="f" onclick="A.open('task')" role="button" tabindex="0" aria-label="Tasks desk"><g class="fb"><rect x="172" y="340" width="114" height="34" fill="#7a1f2e"/><path d="M229 340v34" fill="none"/><circle cx="200" cy="357" r="3.5" fill="#d9a93b"/><circle cx="258" cy="357" r="3.5" fill="#d9a93b"/><rect x="166" y="328" width="126" height="12" rx="4" fill="#9a2f44"/><rect x="190" y="268" width="76" height="54" rx="5" fill="#2b1a22"/><rect x="196" y="274" width="64" height="40" rx="2" fill="#f6d5d9" stroke="none"/><use href="#h" x="228" y="292" fill="#b32642" stroke="none"/><rect x="204" y="321" width="48" height="7" rx="2" fill="#fff3e0" stroke-width="1.5"/><rect x="268" y="316" width="10" height="12" rx="2" fill="#fff3e0" stroke-width="1.5"/><rect x="209" y="382" width="40" height="26" rx="12" fill="#b32642"/><use href="#h" x="229" y="389" fill="#fff3e0" stroke="none"/><ellipse cx="229" cy="416" rx="26" ry="9" fill="#fff3e0"/><path d="M229 424v8" fill="none"/><ellipse cx="229" cy="434" rx="16" ry="4" fill="#7a1f2e"/></g><image href="assets/desk.png" x="166" y="262" width="126" height="176" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="229" y="456" text-anchor="middle">Tasks</text></g></g>
+<g class="w" data-k="timer" data-b="0 0"><g class="f" onclick="A.open('timer')" role="button" tabindex="0" aria-label="Timer"><g class="fb"><circle cx="136" cy="84" r="25" fill="#fff3e0" stroke="#d9a93b" stroke-width="5"/><path d="M136 68v16l10 6" fill="none" stroke-width="3" stroke-linecap="round"/><circle cx="136" cy="84" r="2.5" fill="#b32642" stroke="none"/></g><image href="assets/timer.png" x="108" y="56" width="56" height="56" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="136" y="126" text-anchor="middle">Timer</text></g></g>
+<g class="w" data-k="radio" data-b="0 0"><g class="f" onclick="A.open('radio')" role="button" tabindex="0" aria-label="Radio"><g class="fb"><path d="M88 516l14-22" fill="none" stroke="#d9a93b"/><rect x="28" y="516" width="70" height="44" rx="8" fill="#b32642"/><circle cx="50" cy="538" r="13" fill="#7a1f2e"/><path d="M44 534h12M44 539h12M44 544h12" stroke="#d9a93b" stroke-width="1.5" fill="none"/><rect x="68" y="524" width="22" height="10" rx="2" fill="#fff3e0" stroke-width="1.5"/><circle cx="74" cy="548" r="4" fill="#d9a93b" stroke-width="1.5"/><circle cx="87" cy="548" r="4" fill="#d9a93b" stroke-width="1.5"/></g><image href="assets/radio.png" x="24" y="490" width="80" height="74" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="63" y="584" text-anchor="middle">Radio</text></g></g>
+<g class="w" data-k="tv" data-b="0 0"><g class="f" onclick="A.open('tv')" role="button" tabindex="0" aria-label="TV"><g class="fb"><path d="M185 498l-14-18M215 498l14-18" fill="none" stroke="#d9a93b"/><rect x="150" y="498" width="100" height="62" rx="8" fill="#2b1218"/><rect x="158" y="506" width="84" height="46" rx="4" fill="#f6d5d9" stroke-width="1.5"/><use href="#h" x="200" y="526" fill="#b32642" stroke="none"/><rect x="170" y="560" width="60" height="9" rx="3" fill="#7a1f2e"/></g><image href="assets/tv.png" x="146" y="474" width="108" height="98" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="200" y="590" text-anchor="middle">TV</text></g></g>
+<g class="w" data-k="mani" data-b="0 0"><g class="f" onclick="A.open('mani')" role="button" tabindex="0" aria-label="Manifest corner"><g class="fb"><path d="M335 548v26M315 575h40" fill="none" stroke-width="4"/><ellipse cx="335" cy="542" rx="46" ry="10" fill="#3a2a50"/><circle cx="335" cy="520" r="17" fill="#cfe8f0"/><text x="335" y="527" text-anchor="middle" stroke="none" fill="#7a1f2e" font-size="20">✦</text><rect x="294" y="516" width="8" height="24" fill="#fff3e0" stroke-width="1.5"/><ellipse cx="298" cy="511" rx="3" ry="5" fill="#d9a93b" stroke="none"/><rect x="358" y="532" width="26" height="10" fill="#fff3e0" stroke-width="1.5"/></g><image href="assets/manifest.png" x="290" y="496" width="100" height="84" preserveAspectRatio="xMidYMax meet" visibility="hidden" onload="this.setAttribute('visibility','visible');this.parentNode.querySelector('.fb').style.display='none'"/><text class="lb" x="337" y="594" text-anchor="middle">Manifest</text></g></g>
+</g><g fill="none" stroke="#d9a93b" pointer-events="none"><rect x="3" y="3" width="394" height="594" rx="8" stroke-width="3"/><rect x="8" y="8" width="384" height="584" rx="5" opacity=".6"/></g><g fill="#d9a93b" pointer-events="none"><path d="M3 3l12 0-12 12zM397 3l-12 0 12 12zM3 597l12 0-12-12zM397 597l-12 0 12-12z"/></g></svg>
 
-    <script src="firebase-config.js"></script>
-    <script>
-      const FB =
-        (typeof firebaseConfig !== "undefined" ? firebaseConfig : null) ||
-        window.FIREBASE_CONFIG ||
-        {};
-      const KEY = "hl1",
-        $ = (s) => document.querySelector(s),
-        v = (i) => document.getElementById(i).value,
-        esc = (s) =>
-          String(s ?? "").replace(
-            /[&<>"]/g,
-            (c) =>
-              ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
-          ),
-        td = (d = new Date()) =>
-          new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10),
-        ago = (n) => td(new Date(Date.now() - n * 864e5)),
-        last = (n) => [...Array(n)].map((_, i) => ago(n - 1 - i)),
-        id = () => Math.random().toString(36).slice(2, 9),
-        pad = (n) => String(n).padStart(2, 0),
-        sel = (i, d = 3) =>
-          `<select id=${i}>${[1, 2, 3, 4, 5].map((n) => `<option ${n == d ? "selected" : ""}>${n}</option>`).join("")}</select>`;
-      const D = {
-        habits: [],
-        hl: {},
-        notes: {},
-        food: [],
-        favs: [],
-        money: [],
-        books: { j: [], m: [] },
-        tasks: [],
-        rewards: [],
-        pts: 0,
-        claimed: 0,
-        xp: 0,
-        focus: {},
-        prof: { name: "", img: "" },
-        bud: {},
-        goals: { k: 2000, p: 100, c: 250, f: 65 },
-        tv: [],
-        radio: [],
-        pos: {},
-        t: 0,
-      };
-      let S = { ...D, ...JSON.parse(localStorage[KEY] || "{}") },
-        uid,
-        fb,
-        tm,
-        cur,
-        curF;
-      const push = () => {
-        if (uid) fb.s.setDoc(fb.s.doc(fb.db, "users", uid), S);
-      };
-      const save = () => {
-        S.t = Date.now();
-        localStorage[KEY] = JSON.stringify(S);
-        badge();
-        clearTimeout(tm);
-        tm = setTimeout(push, 600);
-      };
-      const R = () => cur && cur(),
-        show = (t, f) => {
-          curF = f;
-          dc = null;
-          $("#ti").textContent = t;
-          $("#m").hidden = false;
-          cur = () => {
-            $("#bd").innerHTML = f();
-          };
-          R();
-        };
-      // ---------- calendar
-      let cm = new Date(),
-        cd = td();
-      const vCal = () => {
-        const y = cm.getFullYear(),
-          m = cm.getMonth(),
-          f = new Date(y, m, 1).getDay(),
-          n = new Date(y, m + 1, 0).getDate();
-        let g = "<i></i>".repeat(f);
-        for (let d = 1; d <= n; d++) {
-          const k = `${y}-${pad(m + 1)}-${pad(d)}`;
-          g += `<b class="${k == cd ? "on" : ""}" onclick="A.day('${k}')">${d}</b>`;
-        }
-        return (
-          `<div class=row><button class=s onclick="A.nav(-1)">◀</button><b>${cm.toLocaleString("en", { month: "long", year: "numeric" })}</b><button class=s onclick="A.nav(1)">▶</button></div><div class=grid>${g}</div><h4>${cd}</h4>` +
-          "<p>Your plans stay in Google Calendar — no separate app sign-in needed there.</p>" +
-          '<div class=row><button style="flex:1" onclick="A.gcal()">📅 Open Google Calendar</button></div>' +
-          `<input id=et placeholder="New plan"><div class=row><input id=es type=time value=09:00><input id=ee type=time value=10:00></div><button style="width:100%" onclick="A.cadd()">Add to Google Calendar</button>`
-        );
-      };
-      // ---------- habits
-      let hx = null,
-        dc = null;
-      const sure = (i) => {
-        if (dc != i) {
-          dc = i;
-          R();
-          return 0;
-        }
-        dc = null;
-        return 1;
-      };
-      const HC = [
-          "#c8102e",
-          "#e8833a",
-          "#d9a93b",
-          "#6aa57a",
-          "#4b8bb3",
-          "#7b5ea7",
-          "#d6609a",
-        ],
-        hc = (i) => HC[i % 7],
-        f1 = (x) => x.toFixed(1);
-      const streak = (h) => {
-        let n = 0;
-        for (let i = 0; ; i++) {
-          if (S.hl[ago(i) + h]) n++;
-          else if (i > 0) break;
-        }
-        return n;
-      };
-      const ring = (p, c) =>
-        `<svg width="46" height="46" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#f1e3e5" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${p * 0.9425} 94.25" transform="rotate(-90 18 18)"/><text x="18" y="21" text-anchor="middle" font-size="9" font-weight="700" fill="#2b1a22">${p}%</text></svg>`;
-      const radial = () => {
-        const H = S.habits;
-        if (!H.length) return "";
-        const t = new Date(),
-          y = t.getFullYear(),
-          m = t.getMonth(),
-          n = new Date(y, m + 1, 0).getDate(),
-          sp = Math.min(17, 150 / H.length),
-          r0 = 46;
-        let dn = 0,
-          tt = 0,
-          o = "";
-        H.forEach((h, i) => {
-          const r = r0 + i * sp;
-          for (let d = 1; d <= n; d++) {
-            const k = `${y}-${pad(m + 1)}-${pad(d)}`,
-              a = ((d - 1) / n) * 6.2832 - 1.5708,
-              on = S.hl[k + h.id];
-            if (k <= td()) {
-              tt++;
-              if (on) dn++;
-            }
-            o += `<circle cx="${f1(200 + r * Math.cos(a))}" cy="${f1(200 + r * Math.sin(a))}" r="${f1(sp * 0.4)}" fill="${on ? hc(i) : "#f1e3e5"}" stroke="${k == td() ? "#2b1a22" : "none"}" onclick="A.tick('${k}','${h.id}')"/>`;
-          }
-        });
-        const R2 = r0 + H.length * sp + 6;
-        for (let d = 1; d <= n; d++)
-          if (d == 1 || d % 5 == 0) {
-            const a = ((d - 1) / n) * 6.2832 - 1.5708;
-            o += `<text x="${f1(200 + R2 * Math.cos(a))}" y="${f1(203 + R2 * Math.sin(a))}" text-anchor="middle" font-size="9" fill="#7a6a6f">${d}</text>`;
-          }
-        return `<svg viewBox="0 0 400 400" style="width:100%;max-width:380px;display:block;margin:auto"><circle cx="200" cy="200" r="196" fill="#fff" stroke="#d9a93b" stroke-width="3"/><circle cx="200" cy="200" r="${r0 - 10}" fill="#fff3e0" stroke="#d9a93b" stroke-width="2"/><text x="200" y="198" text-anchor="middle" style="font:700 26px 'Dancing Script',cursive" fill="#a8203a">${t.toLocaleString("en", { month: "short" })}</text><text x="200" y="217" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1a22">${tt ? Math.round((dn / tt) * 100) : 0}%</text>${o}</svg><small style="display:block;text-align:center">Tap any dot to tick that day</small>`;
-      };
-      const vHab = () =>
-        radial() +
-        (S.habits
-          .map((h, i) => {
-            const p = Math.round(
-              (last(30).filter((d) => S.hl[d + h.id]).length / 30) * 100,
-            );
-            return `<div class=card><div class=row>${ring(p, hc(i))}<b style="flex:1">${esc(h.n)}</b><span><button class=s onclick="A.hx('${h.id}')" aria-label="Edit">${hx == h.id ? "✔" : "✎"}</button><button class=s onclick="A.hdel('${h.id}')" aria-label="Delete">${dc == h.id ? "Delete?" : "✕"}</button></span></div>${hx == h.id ? `<div class=ed><input value="${esc(h.n)}" onchange="A.hset('${h.id}',this.value)"></div>` : ""}<div class=dots>${last(
-              14,
-            )
-              .map(
-                (d) =>
-                  `<a class="${S.hl[d + h.id] ? "on" : ""}" style="${S.hl[d + h.id] ? "background:" + hc(i) : ""}" onclick="A.tick('${d}','${h.id}')">${d.slice(8)}</a>`,
-              )
-              .join(
-                "",
-              )}</div><small>Last 30 days · streak ${streak(h.id)}</small></div>`;
-          })
-          .join("") || "<p>Add your first habit.</p>") +
-        `<div class=row><input id=hn placeholder="New habit"><button onclick="A.hadd()">Add</button></div><h4>Note for today</h4><textarea id=nt rows=3 onchange="A.note()">${esc(S.notes[td()])}</textarea>`;
-      // ---------- food
-      const MT = ["Breakfast", "Lunch", "Dinner", "Snack", "Other"],
-        MI = ["🥐", "🍱", "🍝", "🍪", "🫖"],
-        mi = (x) => {
-          const i = MT.indexOf(x.mt);
-          return i < 0 ? 4 : i;
-        };
-      let fd = td(),
-        fimg = "";
-      const wk = (d) => {
-        const x = new Date(d + "T12:00:00"),
-          s = +x - ((x.getDay() + 6) % 7) * 864e5;
-        return [...Array(7)].map((_, i) => td(new Date(s + i * 864e5)));
-      };
-      const savefav = (x) => {
-        if (S.favs.some((f) => f.n == x.n)) return;
-        const { d: _d, tm: _t, mt: _m, ...r } = x;
-        S.favs.push({ ...r, id: id() });
-      };
-      const vFood = () => {
-        const G = S.goals,
-          L = S.food
-            .filter((x) => x.d == fd)
-            .sort((a, b) => ((a.tm || "") < (b.tm || "") ? -1 : 1)),
-          sm = (k, Z = L) =>
-            Math.round(Z.reduce((a, x) => a + (+x[k] || 0), 0)),
-          mc = (l, k, c, u) =>
-            `<div class=mc><b style="color:${c}">${l}</b><div class=mv>${sm(k)}<small>${u}</small></div><div class=bar><i style="width:${Math.min(100, (sm(k) / G[k]) * 100)}%;background:${c}"></i></div><small>/ ${G[k]}${u}</small></div>`,
-          [y, m] = fd.split("-").map(Number),
-          f = new Date(y, m - 1, 1).getDay(),
-          n = new Date(y, m, 0).getDate(),
-          h = new Date().getHours(),
-          gs = h < 10 ? 0 : h < 15 ? 1 : h < 21 ? 2 : 3;
-        let g = "<i></i>".repeat(f);
-        for (let d = 1; d <= n; d++) {
-          const k = `${y}-${pad(m)}-${pad(d)}`,
-            c = S.food
-              .filter((x) => x.d == k)
-              .reduce((a, x) => a + (+x.k || 0), 0);
-          g += `<b class="${k == fd ? "on" : ""}" onclick="fd='${k}';R()">${d}<u>${c || ""}</u></b>`;
-        }
-        return (
-          `<div class=row><button class=s onclick="A.fw(-7)">◀</button><b>${fd}</b><button class=s onclick="A.fw(7)">▶</button></div><div class=wk>${wk(
-            fd,
-          )
-            .map(
-              (d) =>
-                `<a class="${d == fd ? "on" : ""}" onclick="fd='${d}';R()"><small>${new Date(d + "T12:00:00").toLocaleString("en", { weekday: "short" })}</small><b>${+d.slice(8)}</b></a>`,
-            )
-            .join("")}</div>
-<div class=mgrid>${mc("Calories", "k", "#a8203a", "")}${mc("Carbs", "c", "#7b5ea7", "g")}${mc("Protein", "p", "#e8833a", "g")}${mc("Fats", "f", "#d9a93b", "g")}</div><details><summary>✎ Daily goals</summary><div class=row><label>Calories<input id=gk type=number value="${G.k}"></label><label>Protein g<input id=gp type=number value="${G.p}"></label></div><div class=row><label>Carbs g<input id=gc type=number value="${G.c}"></label><label>Fats g<input id=gf type=number value="${G.f}"></label></div><button style="width:100%" onclick="A.goal()">Save goals</button></details>` +
-          (MT.map((t, i) => {
-            const M = L.filter((x) => mi(x) == i);
-            return M.length
-              ? `<div class=row><b>${MI[i]} ${t}</b><small>${sm("k", M)} kcal</small></div>` +
-                  M.map(
-                    (x) =>
-                      `<div class=meal>${x.img ? `<img src="${x.img}" alt="">` : `<span class=em>${MI[i]}</span>`}<span style="flex:1"><b>${esc(x.n)}</b><br><small>${x.tm || ""} · ${x.k} kcal · C${x.c} P${x.p} F${x.f}</small></span><button class=s onclick="A.fav('${x.id}')" aria-label="Save meal">★</button><button class=s onclick="A.fdel('${x.id}')" aria-label="Delete">✕</button></div>`,
-                  ).join("")
-              : "";
-          }).join("") || "<p>No meals logged for this day.</p>") +
-          `<h4>Add meal</h4><div class=row><select id=fmt>${MT.map((t, i) => `<option ${i == gs ? "selected" : ""}>${t}</option>`).join("")}</select><input id=ftm type=time value="${new Date().toTimeString().slice(0, 5)}"></div><input id=fn placeholder="Meal name"><div class=row><input id=fk type=number placeholder="kcal"><input id=fc type=number placeholder="Carbs g"></div><div class=row><input id=fp type=number placeholder="Protein g"><input id=ff type=number placeholder="Fats g"></div><input type=file accept="image/*" onchange="A.pic(this)"><label class=row style="justify-content:flex-start"><input type=checkbox id=fsv style="width:auto"> Save to my meals (meal prep)</label><button style="width:100%" onclick="A.fadd()">Add meal</button>` +
-          (S.favs.length
-            ? `<h4>My saved meals</h4><small>Tap to add to ${fd} using the meal type above.</small><div class=chips>${S.favs.map((x) => `<span class=chip><button onclick="A.fuse('${x.id}')">${esc(x.n)} · ${x.k}</button><button class=s onclick="A.fvdel('${x.id}')" aria-label="Remove">✕</button></span>`).join("")}</div>`
-            : "") +
-          `<details><summary>Food calendar</summary><div class=row><button class=s onclick="A.fm(-1)">◀</button><b>${new Date(y, m - 1, 1).toLocaleString("en", { month: "long", year: "numeric" })}</b><button class=s onclick="A.fm(1)">▶</button></div><div class=grid>${g}</div></details>`
-        );
-      };
-      // ---------- books
-      const TPL = {
-        m: [
-          [
-            "🌅 Morning",
-            [
-              ["int", "Today's intention"],
-              ["aff", "Affirmation of the day"],
-              ["gra", "One thing I'm grateful for"],
-              ["goal", "My top goal for today"],
-            ],
-          ],
-          [
-            "✨ Manifestation & mindset",
-            [
-              ["man", "What I'm manifesting"],
-              ["act", "Aligned action I'll take today"],
-              ["lim", "Limiting belief I release"],
-              ["emp", "Chosen empowered thought"],
-            ],
-          ],
-          [
-            "🌙 Evening reflection",
-            [
-              ["well", "What went well today"],
-              ["les", "A lesson I learned"],
-              ["win", "One win I'm celebrating"],
-            ],
-          ],
-        ],
-        j: [
-          ["", [["title", "Title"]]],
-          ["🐈 Mood", []],
-          ["Things I'm grateful for", [["gra", ""]]],
-          ["My goals & intentions", [["goal", ""]]],
-          ["Space for creativity & thoughts", [["free", ""]]],
-          ["Reflections", [["ref", ""]]],
-          ["What I accomplished today", [["acc", ""]]],
-        ],
-      };
-      const MN = ["Very sad", "Sad", "Okay", "Happy", "Very happy"],
-        MP = [
-          "M13 38q7-5 14 0",
-          "M13 37q7-3 14 0",
-          "M14 36h12",
-          "M13 34q7 6 14 0",
-          "M11 33q9 11 18 0",
-        ];
-      const cat = (m) =>
-        `<svg viewBox="0 0 40 52" width="46" height="60" role="img" aria-label="${MN[m]}"><rect x="1.5" y="1.5" width="37" height="49" rx="6" fill="#fff" stroke="#a8203a" stroke-width="2"/><use href="#h" transform="translate(8 8) scale(.5)" fill="#a8203a"/><path d="M8 22l2-11 8 7zM32 22l-2-11-8 7z" fill="#c77dba"/><ellipse cx="20" cy="29" rx="13" ry="11" fill="#c77dba"/><path d="M16 19v3M20 18v3M24 19v3" stroke="#8a4a9a" stroke-width="1.5"/><circle cx="14.5" cy="27" r="3" fill="#f3ec7a"/><circle cx="25.5" cy="27" r="3" fill="#f3ec7a"/><path d="M14.5 25v4M25.5 25v4" stroke="#2b1a22" stroke-width="1.5"/><path d="${MP[m]}" fill="${m > 2 ? "#fff" : "none"}" stroke="#2b1a22" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-      let bk,
-        pg = 0,
-        fl = 0,
-        lst = 0;
-      const pgs = () => S.books[bk],
-        srt = () => {
-          const B = pgs(),
-            c = B[pg];
-          B.sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : 0));
-          pg = Math.max(0, B.indexOf(c));
-        };
-      const fld = (k, l, p, one) =>
-        (l ? `<label class=fl>${l}</label>` : "") +
-        (one
-          ? `<input value="${esc(p.f[k])}" oninput="A.bf('${k}',this.value)">`
-          : `<textarea rows=3 oninput="A.bf('${k}',this.value)">${esc(p.f[k])}</textarea>`);
-      const vBook = () => {
-        const B = pgs();
-        if (!B.length) B.push({ d: td(), f: {} });
-        pg = Math.min(Math.max(pg, 0), B.length - 1);
-        const p = B[pg];
-        p.f = p.f || {};
-        if (lst)
-          return (
-            `<div class=row><button class=s onclick="lst=0;R()">← Back to page</button><b>${B.length} pages</b></div>` +
-            [...B]
-              .reverse()
-              .map((q) => {
-                const i = B.indexOf(q),
-                  f = q.f || {};
-                return `<div class=card onclick="A.bgo(${i})" style="cursor:pointer"><div class=row><b>${q.d}</b>${f.mood != null ? cat(f.mood) : ""}</div><small>${esc((f.title || f.int || f.free || f.man || "").slice(0, 70))}</small></div>`;
-              })
-              .join("")
-          );
-        const c = fl;
-        fl = 0;
-        return (
-          `<div class=row><b>${bk == "j" ? "Daily Journal" : "Manifest Journal"}</b><button class=s onclick="lst=1;R()">☰ All pages</button></div><div class=book><div class="page ${c ? "f" + c : ""}"><label class=fl>Date</label><input type=date value="${p.d}" onchange="A.bdate(this.value)">` +
-          TPL[bk]
-            .map(
-              ([t, F]) =>
-                (t ? `<h4>${t}</h4>` : "") +
-                (t == "🐈 Mood"
-                  ? `<div class=cats>${[0, 1, 2, 3, 4].map((m) => `<button class="cat ${p.f.mood === m ? "on" : ""}" onclick="A.bmood(${m})" aria-label="${MN[m]}">${cat(m)}</button>`).join("")}</div><div class=row><small>very sad</small><small>very happy</small></div>`
-                  : "") +
-                F.map(([k, l]) => fld(k, l, p, k == "title")).join(""),
-            )
-            .join("") +
-          (bk == "m"
-            ? `<h4>How I felt today (1–10)</h4><div class=chips>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => `<button class="s ${p.f.rate === n ? "on" : ""}" onclick="A.brate(${n})">${n}</button>`).join("")}</div>`
-            : "") +
-          `</div></div><div class=row><button onclick="A.bp(-1)">◀</button><small>page ${pg + 1} of ${B.length}</small><button onclick="A.bp(2)">+ New page</button><button onclick="A.bp(1)">▶</button></div>`
-        );
-      };
-      // ---------- money
-      const CT = [
-          "Bills",
-          "Subscriptions",
-          "Entertainment",
-          "Food & Drink",
-          "Groceries",
-          "Health",
-          "Shopping",
-          "Transport",
-          "Travel",
-          "Gifts",
-          "Other",
-        ],
-        CC = [
-          "#c8102e",
-          "#e8833a",
-          "#d9a93b",
-          "#a3c46a",
-          "#6aa57a",
-          "#4bb3a8",
-          "#4b8bb3",
-          "#7b5ea7",
-          "#b07acb",
-          "#d6609a",
-          "#9a8a8f",
-        ],
-        MS = [...Array(12)].map((_, i) =>
-          new Date(2000, i, 1).toLocaleString("en", { month: "short" }),
-        ),
-        ct = (x) => (CT.includes(x.cat) ? x.cat : "Other");
-      let mr = "y",
-        ma0 = td();
-      const mper = () => {
-        const a = new Date(ma0 + "T12:00:00"),
-          Y = a.getFullYear(),
-          M = a.getMonth();
-        if (mr == "y")
-          return {
-            sc: 12,
-            t: String(Y),
-            rows: MS.map((l, m) => ({ l, p: `${Y}-${pad(m + 1)}` })),
-          };
-        if (mr == "m")
-          return {
-            sc: 1,
-            t: a.toLocaleString("en", { month: "long", year: "numeric" }),
-            rows: [...Array(new Date(Y, M + 1, 0).getDate())].map((_, i) => ({
-              l: String(i + 1),
-              p: `${Y}-${pad(M + 1)}-${pad(i + 1)}`,
-            })),
-          };
-        const w = wk(ma0);
-        return {
-          sc: 7 / 30,
-          t: `${w[0].slice(5)} → ${w[6].slice(5)}`,
-          rows: w.map((d) => ({
-            l:
-              new Date(d + "T12:00:00").toLocaleString("en", {
-                weekday: "short",
-              }) +
-              " " +
-              d.slice(8),
-            p: d,
-          })),
-        };
-      };
-      const vMoney = () => {
-        const P = mper(),
-          rw = P.rows.map((r) => {
-            const Lm = S.money.filter((x) => x.d.startsWith(r.p)),
-              c = {};
-            Lm.filter((x) => x.t == "out").forEach(
-              (x) => (c[ct(x)] = (c[ct(x)] || 0) + x.a),
-            );
-            return {
-              ...r,
-              c,
-              o: Object.values(c).reduce((a, b) => a + b, 0),
-              i: Lm.filter((x) => x.t == "in").reduce((a, x) => a + x.a, 0),
-            };
-          }),
-          tot = { c: {}, o: 0, i: 0 };
-        rw.forEach((m) => {
-          tot.o += m.o;
-          tot.i += m.i;
-          CT.forEach((c) => (tot.c[c] = (tot.c[c] || 0) + (m.c[c] || 0)));
-        });
-        const mx = Math.max(1, ...rw.map((m) => m.o)),
-          T = tot.o,
-          per = mr == "y" ? "Month" : "Day";
-        let acc = 0;
-        const dn = T
-          ? CT.filter((c) => tot.c[c])
-              .map((c) => {
-                const fr = tot.c[c] / T,
-                  e = `<circle cx="60" cy="60" r="40" fill="none" stroke="${CC[CT.indexOf(c)]}" stroke-width="22" stroke-dasharray="${f1(fr * 251.3)} 251.3" stroke-dashoffset="${f1(-acc * 251.3)}" transform="rotate(-90 60 60)"/>`;
-                acc += fr;
-                return e;
-              })
-              .join("")
-          : "";
-        return (
-          `<div class=tabs>${[
-            ["w", "Week"],
-            ["m", "Month"],
-            ["y", "Year"],
-          ]
-            .map(
-              ([k, n]) =>
-                `<button class="${mr == k ? "on" : ""}" onclick="mr='${k}';R()">${n} tracker</button>`,
-            )
-            .join(
-              "",
-            )}</div><div class=row><button class=s onclick="A.mnav(-1)">◀</button><b>${P.t}</b><button class=s onclick="A.mnav(1)">▶</button></div><div class=sum><span>Income<br><b class=in>${tot.i}</b></span><span>Expense<br><b class=out>${tot.o}</b></span><span>Saved<br><b>${tot.i - tot.o}</b></span></div>
-<div class=row><select id=mt style="max-width:110px"><option value=out>Expense</option><option value=in>Income</option></select><input id=ma type=number placeholder=Amount></div><div class=row><select id=mcat>${CT.map((c) => `<option>${c}</option>`).join("")}</select><input id=md type=date value=${td()}></div><input id=mc placeholder="Note"><button style="width:100%" onclick="A.madd()">Add</button>
-<h4>${mr == "y" ? "Yearly" : mr == "m" ? "Monthly" : "Weekly"} tracker</h4><div class=sc><table class=mt><tr><th>${per}</th>${CT.map((c, k) => `<th style="background:${CC[k]}44">${c}</th>`).join("")}<th>Spent</th><th>Income</th><th>Saved</th></tr>` +
-          rw
-            .map(
-              (m) =>
-                `<tr><td>${m.l}</td>${CT.map((c) => {
-                  const v = m.c[c] || 0,
-                    b = S.bud[c];
-                  return `<td class="${mr == "y" && b && v > b ? "ov" : ""}">${v || "-"}</td>`;
-                }).join(
-                  "",
-                )}<td><b>${m.o || "-"}</b></td><td>${m.i || "-"}</td><td class="${m.i - m.o < 0 ? "ov" : ""}">${m.o || m.i ? m.i - m.o : "-"}</td></tr>`,
-            )
-            .join("") +
-          `<tr style="background:#f6d5d9"><td>Total</td>${CT.map((c) => {
-            const v = tot.c[c] || 0,
-              b = S.bud[c] * P.sc;
-            return `<td class="${b && v > b ? "ov" : ""}"><b>${v || "-"}</b></td>`;
-          }).join(
-            "",
-          )}<td><b>${tot.o || "-"}</b></td><td><b>${tot.i || "-"}</b></td><td><b>${tot.i - tot.o}</b></td></tr><tr><td>Monthly budget</td>${CT.map((c) => `<td><input type=number class=bi value="${S.bud[c] || ""}" onchange="A.mbud('${c}',this.value)" aria-label="${c} budget"></td>`).join("")}<td></td><td></td><td></td></tr></table></div><small>Red = over budget (budget is scaled to the period).</small>
-<h4>Breakdown</h4>` +
-          rw
-            .map(
-              (m) =>
-                `<div class=row style="margin:2px 0"><small style="width:34px">${m.l}</small><div style="flex:1"><div class=sb style="width:${f1((m.o / mx) * 100)}%">${CT.map((c, j) => (m.c[c] ? `<i style="flex:${m.c[c]};background:${CC[j]}"></i>` : "")).join("")}</div></div><small>${m.o || ""}</small></div>`,
-            )
-            .join("") +
-          `<h4>Categories</h4>` +
-          (T
-            ? `<div class=row><svg viewBox="0 0 120 120" width="130" height="130">${dn}</svg><div style="flex:1;font-size:12px">${CT.filter(
-                (c) => tot.c[c],
-              )
-                .map(
-                  (c) =>
-                    `<div><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${CC[CT.indexOf(c)]}"></span> ${c} ${Math.round((tot.c[c] / T) * 100)}%</div>`,
-                )
-                .join("")}</div></div>`
-            : "<p>No expenses in this period.</p>") +
-          `<details><summary>Entries</summary>` +
-          S.money
-            .filter((x) => rw.some((r) => x.d.startsWith(r.p)))
-            .sort((a, b) => (a.d < b.d ? 1 : -1))
-            .slice(0, 40)
-            .map(
-              (x) =>
-                `<div class=row><span>${x.d.slice(5)} · ${esc(ct(x))}${x.c ? " · " + esc(x.c) : ""}</span><span class=${x.t}>${x.t == "in" ? "+" : "−"}${x.a}<button class=s onclick="A.mdel('${x.id}')" aria-label="Delete">✕</button></span></div>`,
-            )
-            .join("") +
-          `</details>`
-        );
-      };
-      // ---------- tasks
-      const eu = (t) => {
-          const d = t.dl
-            ? Math.ceil((new Date(t.dl) - new Date(td())) / 864e5)
-            : 99;
-          return Math.max(t.ur, d <= 1 ? 5 : d <= 3 ? 4 : d <= 7 ? 3 : 0);
-        },
-        qd = (t) => {
-          const i = t.im >= 3,
-            u = eu(t) >= 3;
-          return i && u ? 0 : i ? 1 : u ? 2 : 3;
-        },
-        QN = [
-          "🔥 Do now",
-          "📅 Plan it",
-          "⚡ Quick / delegate",
-          "🍃 Maybe later",
-        ],
-        sc = (t) => t.im * 3 + eu(t) * 3 - t.ef;
-      let tf = "all",
-        tx = null;
-      const QC = ["#c8102e", "#d9a93b", "#4b8bb3", "#9a8a8f"],
-        QS = ["🔥 Do now", "📅 Plan", "⚡ Quick", "🍃 Later"],
-        sl = (i, f, n) =>
-          `<select onchange="A.tset('${i}','${f}',+this.value)">${[1, 2, 3, 4, 5].map((k) => `<option ${k == n ? "selected" : ""}>${k}</option>`).join("")}</select>`,
-        due = (t) => {
-          if (!t.dl) return "";
-          const d = Math.round((new Date(t.dl) - new Date(td())) / 864e5);
-          return d < 0
-            ? "<em class=od>Overdue</em>"
-            : d == 0
-              ? "<em class=od>Today</em>"
-              : d == 1
-                ? "<em>Tomorrow</em>"
-                : `<em>${t.dl.slice(5)}</em>`;
-        },
-        tcard = (t) => {
-          const q = qd(t);
-          return (
-            `<div class="tc ${tx == t.id ? "wide" : ""}" style="border-top-color:${QC[q]}"><div class=row><button class=ck onclick="A.tdone('${t.id}')" aria-label="Complete task">○</button><b class=tt onclick="A.tx('${t.id}')">${esc(t.n)}</b><button class=s onclick="A.tx('${t.id}')" aria-label="Edit">${tx == t.id ? "✔" : "✎"}</button><button class=s onclick="A.tdel('${t.id}')" aria-label="Delete">${dc == t.id ? "Delete?" : "✕"}</button></div><div class=tags><em style="background:${QC[q]}22;color:${QC[q]}">${QS[q]}</em>${due(t)}<em>effort ${t.ef}</em><em>+${10 + t.ef * 5} pts</em></div>${t.no ? `<small>📝 ${esc(t.no.slice(0, 70))}</small>` : ""}` +
-            (tx == t.id
-              ? `<div class=ed><input value="${esc(t.n)}" onchange="A.tset('${t.id}','n',this.value)"><label>Due date<input type=date value="${t.dl}" onchange="A.tset('${t.id}','dl',this.value)"></label><div class=row><label>Effort<br>${sl(t.id, "ef", t.ef)}</label><label>Important<br>${sl(t.id, "im", t.im)}</label><label>Urgency<br>${sl(t.id, "ur", t.ur)}</label></div><textarea rows=3 placeholder="Notes…" onchange="A.tset('${t.id}','no',this.value)">${esc(t.no)}</textarea><small>Urgency rises on its own as the deadline gets close.</small><button onclick="A.tx('${t.id}')">Done editing</button></div>`
-              : "") +
-            `</div>`
-          );
-        },
-        vTask = () => {
-          const all = [...S.tasks].sort(
-              (a, b) => qd(a) - qd(b) || sc(b) - sc(a),
-            ),
-            n = (k) => all.filter((t) => qd(t) == k).length,
-            L = tf == "all" ? all : all.filter((t) => qd(t) == +tf);
-          const T = [
-            ["all", `All (${all.length})`],
-            ...QS.map((q, k) => ["" + k, `${q} (${n(k)})`]),
-            ["r", "🎁 Rewards"],
-          ];
-          return (
-            `<div class=sum><span>Points<br><b>${S.pts}</b></span><span>Rewards claimed<br><b>${S.claimed}</b></span></div><div class="tabs sc">${T.map(([k, l]) => `<button class="${tf == k ? "on" : ""}" onclick="A.tf('${k}')">${l}</button>`).join("")}</div>` +
-            (tf == "r"
-              ? `<div class=row><input id=rn placeholder="New reward"><input id=rc type=number placeholder="Cost" style="max-width:90px"><button onclick="A.radd()">Add</button></div><div class=gal>` +
-                S.rewards
-                  .map((r) => {
-                    const ok = S.pts >= r.c;
-                    return `<div class=tc style="border-top-color:#d9a93b"><b>🎁 ${esc(r.n)}</b><small>${r.c} pts</small><div class=bar><i style="width:${Math.min(100, (S.pts / r.c) * 100)}%"></i></div><div class=row><button ${ok ? "" : "disabled"} onclick="A.rclaim('${r.id}')">${ok ? "Claim" : r.c - S.pts + " to go"}</button><button class=s onclick="A.rdel('${r.id}')">✕</button></div></div>`;
-                  })
-                  .join("") +
-                `</div>` +
-                (S.rewards.length ? "" : "<p>Add a treat you want to earn.</p>")
-              : `<input id=tn placeholder="Add a task and press Enter" onkeydown="event.key=='Enter'&&A.tadd()"><div class=gal>${L.map(tcard).join("")}</div>` +
-                (L.length ? "" : "<p>Nothing here yet. Type a task above.</p>"))
-          );
-        };
-      // ---------- timer / tv / radio
-      const dur = { f: 1500, b: 300 },
-        fmt = (n) => `${pad(Math.floor(n / 60))}:${pad(n % 60)}`;
-      let T = { m: "f", left: 1500, run: 0, end: 0, iv: 0 };
-      const tick2 = () => {
-        T.left = Math.max(0, Math.ceil((T.end - Date.now()) / 1000));
-        const e = $("#tclk");
-        if (e) e.textContent = fmt(T.left);
-        if (!T.left) {
-          clearInterval(T.iv);
-          T.run = 0;
-          if (T.m == "f") {
-            S.focus[td()] = (S.focus[td()] || 0) + 1;
-            xp(20);
-            save();
-          }
-          navigator.vibrate?.([300, 100, 300]);
-          T.m = T.m == "f" ? "b" : "f";
-          T.left = dur[T.m];
-          if (curF == vTimer) R();
-        }
-      };
-      const vTimer = () => {
-        const tot = Object.values(S.focus).reduce((a, b) => a + b, 0);
-        return `<div class=sum><span>Focus today<br><b>${S.focus[td()] || 0}</b></span><span>All time<br><b>${tot}</b></span></div><div class=tabs><button class="${T.m == "f" ? "on" : ""}" onclick="A.tmode('f')">Focus 25</button><button class="${T.m == "b" ? "on" : ""}" onclick="A.tmode('b')">Break 5</button></div><div id=tclk style="font:700 72px 'Dancing Script',cursive;text-align:center;color:var(--r)">${fmt(T.left)}</div><div class=row><button style="flex:1" onclick="A.tgo()">${T.run ? "Pause" : "Start"}</button><button class=s onclick="A.trs()">Reset</button></div><small>Finish a focus session to earn 20 XP.</small>`;
-      };
-      const TS = ["To watch", "Watching", "Done"],
-        yt = (u) => window.open(u, "_blank", "noopener");
-      const vTV = () => {
-        const body = [0, 1, 2]
-          .map((s) => {
-            const L = S.tv.filter((x) => x.s == s);
-            return L.length
-              ? `<h4>${TS[s]} (${L.length})</h4><div class=gal>${L.map((x) => `<div class=tc style="border-top-color:${QC[s + 1]}"><b style="cursor:pointer" onclick="A.ytn('${x.id}')">▶ ${esc(x.n)}</b><div class=tags><em>${esc(x.k)}</em></div><div class=row><button class=s onclick="A.vnext('${x.id}')">${s < 2 ? "→ " + TS[s + 1] : "↺ Again"}</button><button class=s onclick="A.vdel('${x.id}')">✕</button></div></div>`).join("")}</div>`
-              : "";
-          })
-          .join("");
-        return (
-          `<div class=row><input id=vq placeholder="Search YouTube" onkeydown="event.key=='Enter'&&A.ytq('v')"><button onclick="A.ytq('v')">Search</button></div><button style="width:100%" onclick="yt('https://www.youtube.com')">▶ Open YouTube</button><h4>My watchlist</h4><small>Tap a title to search it on YouTube.</small><div class=row><input id=vn placeholder="Show, channel or video"><select id=vk style="max-width:100px"><option>Video</option><option>Series</option><option>Movie</option><option>Channel</option></select><button onclick="A.vadd()">Add</button></div>` +
-          (body || "<p>Nothing saved yet.</p>")
-        );
-      };
-      const vRadio = () =>
-        `<div class=row><input id=rq placeholder="Search YouTube Music" onkeydown="event.key=='Enter'&&A.ytq('r')"><button onclick="A.ytq('r')">Search</button></div><button style="width:100%" onclick="yt('https://music.youtube.com')">🎵 Open YouTube Music</button><h4>My playlists</h4><input id=rdn placeholder="Playlist name"><div class=row><input id=rdu placeholder="Paste a YouTube Music link"><button onclick="A.oadd()">Save</button></div>` +
-        (S.radio
-          .map(
-            (x) =>
-              `<div class=row><a href="${esc(x.u)}" target=_blank rel=noopener style="flex:1;color:var(--r);font-weight:700">🎵 ${esc(x.n)}</a><button class=s onclick="A.odel('${x.id}')">✕</button></div>`,
-          )
-          .join("") || "<p>Paste a playlist link to keep it here.</p>");
-      let acct = "";
-      const AV = () => (S.prof.img ? `<img src="${S.prof.img}" alt="">` : "♥"),
-        ios =
-          /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-          (navigator.platform == "MacIntel" && navigator.maxTouchPoints > 1),
-        sa =
-          matchMedia("(display-mode: standalone)").matches ||
-          navigator.standalone;
-      const vSet =
-        () => `<h4>👤 Profile</h4><div class=row><span class="av big">${AV()}</span><div style="flex:1"><input id=pn placeholder="Your name" value="${esc(S.prof.name)}" onchange="A.pname(this.value)"><input type=file accept="image/*" onchange="A.ppic(this)"></div></div><div class=sum><span>Level<br><b>${1 + Math.floor(S.xp / 100)}</b></span><span>Total XP<br><b>${S.xp}</b></span></div><div class=bar><i style="width:${S.xp % 100}%"></i></div><small>${100 - (S.xp % 100)} XP to the next level</small><p>${acct ? `Signed in as <b>${esc(acct)}</b>` : "Not signed in. Your data stays on this device."}</p>${acct ? '<button class=s onclick="A.logout()">Sign out</button>' : `<div class=ed><label>Email<input id=lemail type=email placeholder="you@example.com"></label><label>Password<input id=lpw type=password></label></div><div class=row><button style="flex:1" onclick="A.login()">Sign in</button><button onclick="A.signup()">Create account</button></div>`}
+<script src="firebase-config.js"></script>
+<script>
+const FB=(typeof firebaseConfig!=='undefined'?firebaseConfig:null)||window.FIREBASE_CONFIG||{};
+const KEY='hl1',$=s=>document.querySelector(s),v=i=>document.getElementById(i).value,
+esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
+td=(d=new Date())=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10),
+ago=n=>td(new Date(Date.now()-n*864e5)),last=n=>[...Array(n)].map((_,i)=>ago(n-1-i)),id=()=>Math.random().toString(36).slice(2,9),
+pad=n=>String(n).padStart(2,0),
+sel=(i,d=3)=>`<select id=${i}>${[1,2,3,4,5].map(n=>`<option ${n==d?'selected':''}>${n}</option>`).join('')}</select>`;
+const D={habits:[],hl:{},notes:{},food:[],favs:[],money:[],books:{j:[],m:[]},tasks:[],rewards:[],pts:0,claimed:0,xp:0,focus:{},plan:{},mj:{},affs:[],vg:[],wins:[],tdn:{},water:{},prof:{name:'',img:''},bud:{},goals:{k:2000,p:100,c:250,f:65,w:8},tv:[],radio:[],pos:{},size:{},labelPos:{},labelFont:{},labelHide:{},t:0};
+let S={...D,...JSON.parse(localStorage[KEY]||'{}')},uid,fb,tm,cur,curF;
+const push=()=>{if(uid)fb.s.setDoc(fb.s.doc(fb.db,'users',uid),S)};
+const save=()=>{S.t=Date.now();localStorage[KEY]=JSON.stringify(S);badge();clearTimeout(tm);tm=setTimeout(push,600)};
+const R=()=>cur&&cur(),show=(t,f)=>{curF=f;dc=null;$('#ti').textContent=t;$('#m').hidden=false;cur=()=>{$('#bd').innerHTML=f()};R()};
+// ---------- calendar
+let cm=new Date(),cd=td();
+const hrl=h=>`${h%12||12}-${(h+1)%12||12} ${h<12?'AM':'PM'}`,HRS=[...Array(16)].map((_,i)=>6+i);
+const pln=(k,i,a)=>{const x=(a||[])[i]||{};return`<div class=row style="gap:6px"><input type=checkbox style="width:auto" ${x.d?'checked':''} onchange="A.pl('${k}',${i},'d',this.checked)" aria-label="done"><input value="${esc(x.t)}" oninput="A.pl('${k}',${i},'t',this.value)"></div>`};
+const gcs=()=>`<p>Plans live in Google Calendar. No app sign-in needed there.</p><div class=row><button style="flex:1" onclick="A.gcal()">📅 Open Google Calendar</button></div><input id=et placeholder="New event"><div class=row><input id=es type=time value=09:00><input id=ee type=time value=10:00></div><button style="width:100%" onclick="A.cadd()">Add to Google Calendar</button>`;
+const vCal=()=>{const y=cm.getFullYear(),m=cm.getMonth(),f=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),P=S.plan[cd]||{},sch=P.s||{},
+has=k=>{const q=S.plan[k];return q&&(Object.values(q.s||{}).some(Boolean)||(q.pri||[]).some(x=>x.t)||q.g||(q.apt||[]).some(x=>x.t)||q.n)};let g='<i></i>'.repeat(f);
+for(let d=1;d<=n;d++){const k=`${y}-${pad(m+1)}-${pad(d)}`;g+=`<b class="${k==cd?'on':''}" onclick="A.day('${k}')">${d}<u>${has(k)?'♥':''}</u></b>`}
+const tk=S.tasks.filter(t=>t.pl==cd);
+return`<div class=pl><div class=row style="margin:0"><button class=s onclick="A.nav(-1)">◀</button><b>${cm.toLocaleString('en',{month:'long',year:'numeric'})}</b><button class=s onclick="A.nav(1)">▶</button></div><div class=grid>${'SMTWTFS'.split('').map(x=>`<small>${x}</small>`).join('')}</div><div class=grid>${g}</div>
+<div class=ph><span>DATE · ${cd}</span><span>${'SMTWTFS'.split('').map((x,i)=>`<i class="${new Date(cd+'T12:00:00').getDay()==i?'on':''}">${x}</i>`).join('')}</span></div>`+(tk.length?`<small>Planned tasks: ${tk.map(t=>esc(t.n)).join(', ')}</small>`:'')+
+`<div class=pln><div><h5>Today's schedule</h5><table class=sch>${HRS.map(h=>`<tr><td>${hrl(h)}</td><td><input value="${esc(sch[h])}" oninput="A.ps(${h},this.value)" aria-label="${hrl(h)}"></td></tr>`).join('')}</table></div>
+<div><h5>Top priorities</h5>${[0,1,2,3].map(i=>pln('pri',i,P.pri)).join('')}<h5>Today's goal</h5><textarea rows=4 oninput="A.pset('g',this.value)">${esc(P.g)}</textarea><h5>Appointment</h5>${[0,1,2,3].map(i=>pln('apt',i,P.apt)).join('')}</div></div>
+<h5>Notes</h5><textarea rows=2 oninput="A.pset('n',this.value)">${esc(P.n)}</textarea><details><summary>Google Calendar</summary>${gcs()}</details></div>`};
+// ---------- habits
+let hx=null,dc=null;const sure=i=>{if(dc!=i){dc=i;R();return 0}dc=null;return 1};
+const HC=['#c8102e','#e8833a','#d9a93b','#6aa57a','#4b8bb3','#7b5ea7','#d6609a'],hc=i=>HC[i%7],f1=x=>x.toFixed(1);
+const streak=h=>{let n=0;for(let i=0;;i++){if(S.hl[ago(i)+h])n++;else if(i>0)break}return n};
+const ring=(p,c)=>`<svg width="34" height="34" viewBox="0 0 36 36" style="flex:none"><circle cx="18" cy="18" r="15" fill="none" stroke="#f1e3e5" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${p*.9425} 94.25" transform="rotate(-90 18 18)"/><text x="18" y="21" text-anchor="middle" font-size="9" font-weight="700" fill="#2b1a22">${p}%</text></svg>`;
+const radial=()=>{const H=S.habits;if(!H.length)return'';const t=new Date(),y=t.getFullYear(),m=t.getMonth(),n=new Date(y,m+1,0).getDate(),sp=Math.min(16,140/H.length),r0=34,Rm=r0+H.length*sp+16,W=Math.round(Math.min(230,Math.max(150,Rm*1.5))),s=W/(2*Rm),fs=f1(9/s);let dn=0,tt=0,o='';
+H.forEach((h,i)=>{const r=r0+i*sp;for(let d=1;d<=n;d++){const k=`${y}-${pad(m+1)}-${pad(d)}`,a=(d-1)/n*6.2832-1.5708,on=S.hl[k+h.id];if(k<=td()){tt++;if(on)dn++}o+=`<circle cx="${f1(200+r*Math.cos(a))}" cy="${f1(200+r*Math.sin(a))}" r="${f1(sp*.4)}" fill="${on?hc(i):'#f1e3e5'}" stroke="${k==td()?'#2b1a22':'none'}" onclick="A.tick('${k}','${h.id}')"/>`}});
+const R2=r0+H.length*sp+5;for(let d=1;d<=n;d++)if(d==1||d%5==0){const a=(d-1)/n*6.2832-1.5708;o+=`<text x="${f1(200+R2*Math.cos(a))}" y="${f1(200+R2*Math.sin(a)+fs/3)}" text-anchor="middle" font-size="${fs}" fill="#7a6a6f">${d}</text>`}
+return`<svg viewBox="${200-Rm} ${200-Rm} ${2*Rm} ${2*Rm}" style="width:100%;max-width:${W}px;display:block;margin:6px auto"><circle cx="200" cy="200" r="${Rm-1}" fill="#fff" stroke="#d9a93b" stroke-width="2"/><circle cx="200" cy="200" r="${r0-8}" fill="#fff3e0" stroke="#d9a93b" stroke-width="1.5"/><text x="200" y="${f1(200-1/s)}" text-anchor="middle" style="font:700 ${f1(15/s)}px 'Dancing Script',Mali,cursive" fill="#a8203a">${t.toLocaleString('en',{month:'short'})}</text><text x="200" y="${f1(200+11/s)}" text-anchor="middle" font-size="${f1(10/s)}" font-weight="700" fill="#2b1a22">${tt?Math.round(dn/tt*100):0}%</text>${o}</svg><small style="display:block;text-align:center">Tap a dot to tick that day</small>`};
+const vHab=()=>radial()+`<div class=hgrid>`+(S.habits.map((h,i)=>{const p=Math.round(last(30).filter(d=>S.hl[d+h.id]).length/30*100),o=hx==h.id;return`<div class="card hc ${o?'wide':''}"><div class=hh>${ring(p,hc(i))}<b>${esc(h.n)}</b></div><div class=dots>${last(7).map(d=>`<a class="${S.hl[d+h.id]?'on':''}" style="${S.hl[d+h.id]?'background:'+hc(i):''}" onclick="A.tick('${d}','${h.id}')">${d.slice(8)}</a>`).join('')}</div><div class=row><small>🔥 ${streak(h.id)} day streak</small><span><button class=s onclick="A.hx('${h.id}')" aria-label="Edit">${o?'✔':'✎'}</button><button class=s onclick="A.hdel('${h.id}')" aria-label="Delete">${dc==h.id?'Delete?':'✕'}</button></span></div>${o?`<div class=ed><input value="${esc(h.n)}" onchange="A.hset('${h.id}',this.value)"></div>`:''}</div>`}).join('')||'<p style="grid-column:1/-1">Add your first habit.</p>')+`</div>`
++`<div class=row><input id=hn placeholder="New habit"><button onclick="A.hadd()">Add</button></div><h4>Note for today</h4><textarea id=nt rows=3 onchange="A.note()">${esc(S.notes[td()])}</textarea>`;
+// ---------- food
+const MT=['Breakfast','Lunch','Dinner','Snack','Other'],MI=['🥐','🍱','🍝','🍪','🫖'],mi=x=>{const i=MT.indexOf(x.mt);return i<0?4:i};
+let fd=td(),fimg='';
+const wk=d=>{const x=new Date(d+'T12:00:00'),s=+x-((x.getDay()+6)%7)*864e5;return[...Array(7)].map((_,i)=>td(new Date(s+i*864e5)))};
+const savefav=x=>{if(S.favs.some(f=>f.n==x.n))return;const{d:_d,tm:_t,mt:_m,...r}=x;S.favs.push({...r,id:id()})};
+const vFood=()=>{const G=S.goals,L=S.food.filter(x=>x.d==fd).sort((a,b)=>(a.tm||'')<(b.tm||'')?-1:1),sm=(k,Z=L)=>Math.round(Z.reduce((a,x)=>a+(+x[k]||0),0)),
+mc=(l,k,c,u)=>`<div class=mc><b style="color:${c}">${l}</b><div class=mv>${sm(k)}<small>${u}</small></div><div class=bar><i style="width:${Math.min(100,sm(k)/G[k]*100)}%;background:${c}"></i></div><small>/ ${G[k]}${u}</small></div>`,
+[y,m]=fd.split('-').map(Number),f=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate(),h=new Date().getHours(),gs=h<10?0:h<15?1:h<21?2:3;let g='<i></i>'.repeat(f);
+for(let d=1;d<=n;d++){const k=`${y}-${pad(m)}-${pad(d)}`,c=S.food.filter(x=>x.d==k).reduce((a,x)=>a+(+x.k||0),0);g+=`<b class="${k==fd?'on':''}" onclick="fd='${k}';R()">${d}<u>${c||''}</u></b>`}
+return`<div class=row><button class=s onclick="A.fw(-7)">◀</button><b>${fd}</b><button class=s onclick="A.fw(7)">▶</button></div><div class=wk>${wk(fd).map(d=>`<a class="${d==fd?'on':''}" onclick="fd='${d}';R()"><small>${new Date(d+'T12:00:00').toLocaleString('en',{weekday:'short'})}</small><b>${+d.slice(8)}</b></a>`).join('')}</div>
+<div class=mgrid>${mc('Calories','k','#a8203a','')}${mc('Carbs','c','#7b5ea7','g')}${mc('Protein','p','#e8833a','g')}${mc('Fats','f','#d9a93b','g')}</div>${(()=>{const W=S.water[fd]||0,gw=G.w||8;return`<div class=mc style="margin:6px 0"><div class=row><b style="color:#4b8bb3">💧 Water</b><span><b>${W}</b> / ${gw} glasses · ${W*250} ml</span></div><div class=drops>${[...Array(Math.max(gw,W))].map((_,i)=>`<button class="drop ${i<W?'on':''}" onclick="A.wset(${i+1})" aria-label="${i+1} glasses">💧</button>`).join('')}<button class=s onclick="A.wset(${W+1})" aria-label="Add glass">＋</button><button class=s onclick="A.wset(${Math.max(0,W-1)})" aria-label="Remove glass">−</button></div></div>`})()}<details><summary>✎ Daily goals</summary><div class=row><label>Calories<input id=gk type=number value="${G.k}"></label><label>Protein g<input id=gp type=number value="${G.p}"></label></div><div class=row><label>Carbs g<input id=gc type=number value="${G.c}"></label><label>Fats g<input id=gf type=number value="${G.f}"></label></div><div class=row><label>Water (glasses)<input id=gw type=number value="${G.w||8}"></label></div><button style="width:100%" onclick="A.goal()">Save goals</button></details>`+
+(MT.map((t,i)=>{const M=L.filter(x=>mi(x)==i);return M.length?`<div class=row><b>${MI[i]} ${t}</b><small>${sm('k',M)} kcal</small></div>`+M.map(x=>`<div class=meal>${x.img?`<img src="${x.img}" alt="">`:`<span class=em>${MI[i]}</span>`}<span style="flex:1"><b>${esc(x.n)}</b><br><small>${x.tm||''} · ${x.k} kcal · C${x.c} P${x.p} F${x.f}</small></span><button class=s onclick="A.fav('${x.id}')" aria-label="Save meal">★</button><button class=s onclick="A.fdel('${x.id}')" aria-label="Delete">✕</button></div>`).join(''):''}).join('')||'<p>No meals logged for this day.</p>')+
+`<h4>Add meal</h4><div class=row><select id=fmt>${MT.map((t,i)=>`<option ${i==gs?'selected':''}>${t}</option>`).join('')}</select><input id=ftm type=time value="${new Date().toTimeString().slice(0,5)}"></div><input id=fn placeholder="Meal name"><div class=row><input id=fk type=number placeholder="kcal"><input id=fc type=number placeholder="Carbs g"></div><div class=row><input id=fp type=number placeholder="Protein g"><input id=ff type=number placeholder="Fats g"></div><label class=row style="justify-content:flex-start"><input type=checkbox id=fsv style="width:auto"> Save to my meals (meal prep)</label><button style="width:100%" onclick="A.fadd()">Add meal</button>`+
+(S.favs.length?`<h4>My saved meals</h4><small>Tap to add to ${fd} using the meal type above.</small><div class=chips>${S.favs.map(x=>`<span class=chip><button onclick="A.fuse('${x.id}')">${esc(x.n)} · ${x.k}</button><button class=s onclick="A.fvdel('${x.id}')" aria-label="Remove">✕</button></span>`).join('')}</div>`:'')+
+`<details><summary>Food calendar</summary><div class=row><button class=s onclick="A.fm(-1)">◀</button><b>${new Date(y,m-1,1).toLocaleString('en',{month:'long',year:'numeric'})}</b><button class=s onclick="A.fm(1)">▶</button></div><div class=grid>${g}</div></details>`};
+// ---------- books
+const TPL={m:[['🌅 Morning',[['int',"Today's intention"],['aff','Affirmation of the day'],['gra',"One thing I'm grateful for"],['goal','My top goal for today']]],['✨ Manifestation & mindset',[['man',"What I'm manifesting"],['act',"Aligned action I'll take today"],['lim','Limiting belief I release'],['emp','Chosen empowered thought']]],['🌙 Evening reflection',[['well','What went well today'],['les','A lesson I learned'],['win',"One win I'm celebrating"]]]],
+j:[['',[['title','Title']]],['🐈 Mood',[]],['🌤 Weather',[['temp','Temperature (°C)']]],["Things I'm grateful for",[['gra','']]],['My goals & intentions',[['goal','']]],['Space for creativity & thoughts',[['free','']]],['Reflections',[['ref','']]],['What I accomplished today',[['acc','']]]]};
+const MN=['Very sad','Sad','Okay','Happy','Very happy'],MP=['M13 38q7-5 14 0','M13 37q7-3 14 0','M14 36h12','M13 34q7 6 14 0','M11 33q9 11 18 0'];
+const cat=m=>`<svg viewBox="0 0 40 52" width="46" height="60" role="img" aria-label="${MN[m]}"><rect x="1.5" y="1.5" width="37" height="49" rx="6" fill="#fff" stroke="#a8203a" stroke-width="2"/><use href="#h" transform="translate(8 8) scale(.5)" fill="#a8203a"/><path d="M8 22l2-11 8 7zM32 22l-2-11-8 7z" fill="#c77dba"/><ellipse cx="20" cy="29" rx="13" ry="11" fill="#c77dba"/><path d="M16 19v3M20 18v3M24 19v3" stroke="#8a4a9a" stroke-width="1.5"/><circle cx="14.5" cy="27" r="3" fill="#f3ec7a"/><circle cx="25.5" cy="27" r="3" fill="#f3ec7a"/><path d="M14.5 25v4M25.5 25v4" stroke="#2b1a22" stroke-width="1.5"/><path d="${MP[m]}" fill="${m>2?'#fff':'none'}" stroke="#2b1a22" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+let bk,pg=0,fl=0,lst=0;
+const pgs=()=>S.books[bk],srt=()=>{const B=pgs(),c=B[pg];B.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);pg=Math.max(0,B.indexOf(c))};
+const fld=(k,l,p,one)=>(l?`<label class=fl>${l}</label>`:'')+(one?`<input value="${esc(p.f[k])}" oninput="A.bf('${k}',this.value)">`:`<textarea rows=3 oninput="A.bf('${k}',this.value)">${esc(p.f[k])}</textarea>`);
+const vBook=()=>{const B=pgs();if(!B.length)B.push({d:td(),f:{}});pg=Math.min(Math.max(pg,0),B.length-1);const p=B[pg];p.f=p.f||{};
+if(lst)return`<div class=row><button class=s onclick="lst=0;R()">← Back to page</button><b>${B.length} pages</b></div>`+[...B].reverse().map(q=>{const i=B.indexOf(q),f=q.f||{};return`<div class=card onclick="A.bgo(${i})" style="cursor:pointer"><div class=row><b>${q.d}</b>${f.wx!=null?WX[f.wx].split(' ')[0]:''}${f.mood!=null?cat(f.mood):''}</div><small>${esc((f.title||f.int||f.free||f.man||'').slice(0,70))}</small></div>`}).join('');
+const c=fl;fl=0;
+return`<div class=row><b>${bk=='j'?'Daily Journal':'Manifest Journal'}</b><button class=s onclick="lst=1;R()">☰ All pages</button></div><div class=book><div class="page ${c?'f'+c:''}"><label class=fl>Date</label><input type=date value="${p.d}" onchange="A.bdate(this.value)">`+
+TPL[bk].map(([t,F])=>(t?`<h4>${t}</h4>`:'')+(t=='🌤 Weather'?`<div class=chips>${WX.map((w,i)=>`<button class="s ${p.f.wx===i?'on':''}" onclick="A.bwx(${i})">${w}</button>`).join('')}</div>`:'')+(t=='🐈 Mood'?`<div class=cats>${[0,1,2,3,4].map(m=>`<button class="cat ${p.f.mood===m?'on':''}" onclick="A.bmood(${m})" aria-label="${MN[m]}">${cat(m)}</button>`).join('')}</div><div class=row><small>very sad</small><small>very happy</small></div>`:'')+F.map(([k,l])=>fld(k,l,p,k=='title'||k=='temp')).join('')).join('')+
+(bk=='m'?`<h4>How I felt today (1–10)</h4><div class=chips>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="s ${p.f.rate===n?'on':''}" onclick="A.brate(${n})">${n}</button>`).join('')}</div>`:'')+
+`</div></div><div class=row><button onclick="A.bp(-1)">◀</button><small>page ${pg+1} of ${B.length}</small><button onclick="A.bp(2)">+ New page</button><button onclick="A.bp(1)">▶</button></div>`};
+// ---------- money
+const CT=['Bills','Subscriptions','Entertainment','Food & Drink','Groceries','Health','Shopping','Transport','Travel','Gifts','Other'],CC=['#c8102e','#e8833a','#d9a93b','#a3c46a','#6aa57a','#4bb3a8','#4b8bb3','#7b5ea7','#b07acb','#d6609a','#9a8a8f'],MS=[...Array(12)].map((_,i)=>new Date(2000,i,1).toLocaleString('en',{month:'short'})),ct=x=>CT.includes(x.cat)?x.cat:'Other';
+let mr='y',ma0=td();
+const mper=()=>{const a=new Date(ma0+'T12:00:00'),Y=a.getFullYear(),M=a.getMonth();
+if(mr=='y')return{sc:12,t:String(Y),rows:MS.map((l,m)=>({l,p:`${Y}-${pad(m+1)}`}))};
+if(mr=='m')return{sc:1,t:a.toLocaleString('en',{month:'long',year:'numeric'}),rows:[...Array(new Date(Y,M+1,0).getDate())].map((_,i)=>({l:String(i+1),p:`${Y}-${pad(M+1)}-${pad(i+1)}`}))};
+const w=wk(ma0);return{sc:7/30,t:`${w[0].slice(5)} → ${w[6].slice(5)}`,rows:w.map(d=>({l:new Date(d+'T12:00:00').toLocaleString('en',{weekday:'short'})+' '+d.slice(8),p:d}))}};
+const vMoney=()=>{const P=mper(),rw=P.rows.map(r=>{const Lm=S.money.filter(x=>x.d.startsWith(r.p)),c={};Lm.filter(x=>x.t=='out').forEach(x=>c[ct(x)]=(c[ct(x)]||0)+x.a);return{...r,c,o:Object.values(c).reduce((a,b)=>a+b,0),i:Lm.filter(x=>x.t=='in').reduce((a,x)=>a+x.a,0)}}),
+tot={c:{},o:0,i:0};rw.forEach(m=>{tot.o+=m.o;tot.i+=m.i;CT.forEach(c=>tot.c[c]=(tot.c[c]||0)+(m.c[c]||0))});
+const mx=Math.max(1,...rw.map(m=>m.o)),T=tot.o,per=mr=='y'?'Month':'Day';let acc=0;
+const dn=T?CT.filter(c=>tot.c[c]).map(c=>{const fr=tot.c[c]/T,e=`<circle cx="60" cy="60" r="40" fill="none" stroke="${CC[CT.indexOf(c)]}" stroke-width="22" stroke-dasharray="${f1(fr*251.3)} 251.3" stroke-dashoffset="${f1(-acc*251.3)}" transform="rotate(-90 60 60)"/>`;acc+=fr;return e}).join(''):'';
+return`<div class=tabs>${[['w','Week'],['m','Month'],['y','Year']].map(([k,n])=>`<button class="${mr==k?'on':''}" onclick="mr='${k}';R()">${n} tracker</button>`).join('')}</div><div class=row><button class=s onclick="A.mnav(-1)">◀</button><b>${P.t}</b><button class=s onclick="A.mnav(1)">▶</button></div><div class=sum><span>Income<br><b class=in>${tot.i}</b></span><span>Expense<br><b class=out>${tot.o}</b></span><span>Saved<br><b>${tot.i-tot.o}</b></span></div>
+<div class=row><select id=mt style="max-width:110px"><option value=out>Expense</option><option value=in>Income</option></select><input id=ma type=number placeholder=Amount></div><div class=row><select id=mcat>${CT.map(c=>`<option>${c}</option>`).join('')}</select><input id=md type=date value=${td()}></div><input id=mc placeholder="Note"><button style="width:100%" onclick="A.madd()">Add</button>
+<h4>${mr=='y'?'Yearly':mr=='m'?'Monthly':'Weekly'} tracker</h4><div class=sc><table class=mt><tr><th>${per}</th>${CT.map((c,k)=>`<th style="background:${CC[k]}44">${c}</th>`).join('')}<th>Spent</th><th>Income</th><th>Saved</th></tr>`+
+rw.map(m=>`<tr><td>${m.l}</td>${CT.map(c=>{const v=m.c[c]||0,b=S.bud[c];return`<td class="${mr=='y'&&b&&v>b?'ov':''}">${v||'-'}</td>`}).join('')}<td><b>${m.o||'-'}</b></td><td>${m.i||'-'}</td><td class="${m.i-m.o<0?'ov':''}">${m.o||m.i?m.i-m.o:'-'}</td></tr>`).join('')+
+`<tr style="background:#f6d5d9"><td>Total</td>${CT.map(c=>{const v=tot.c[c]||0,b=S.bud[c]*P.sc;return`<td class="${b&&v>b?'ov':''}"><b>${v||'-'}</b></td>`}).join('')}<td><b>${tot.o||'-'}</b></td><td><b>${tot.i||'-'}</b></td><td><b>${tot.i-tot.o}</b></td></tr><tr><td>Monthly budget</td>${CT.map(c=>`<td><input type=number class=bi value="${S.bud[c]||''}" onchange="A.mbud('${c}',this.value)" aria-label="${c} budget"></td>`).join('')}<td></td><td></td><td></td></tr></table></div><small>Red = over budget (budget is scaled to the period).</small>
+<h4>Breakdown</h4>`+rw.map(m=>`<div class=row style="margin:2px 0"><small style="width:34px">${m.l}</small><div style="flex:1"><div class=sb style="width:${f1(m.o/mx*100)}%">${CT.map((c,j)=>m.c[c]?`<i style="flex:${m.c[c]};background:${CC[j]}"></i>`:'').join('')}</div></div><small>${m.o||''}</small></div>`).join('')+
+`<h4>Categories</h4>`+(T?`<div class=row><svg viewBox="0 0 120 120" width="130" height="130">${dn}</svg><div style="flex:1;font-size:12px">${CT.filter(c=>tot.c[c]).map(c=>`<div><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${CC[CT.indexOf(c)]}"></span> ${c} ${Math.round(tot.c[c]/T*100)}%</div>`).join('')}</div></div>`:'<p>No expenses in this period.</p>')+
+`<details><summary>Entries</summary>`+S.money.filter(x=>rw.some(r=>x.d.startsWith(r.p))).sort((a,b)=>a.d<b.d?1:-1).slice(0,40).map(x=>`<div class=row><span>${x.d.slice(5)} · ${esc(ct(x))}${x.c?' · '+esc(x.c):''}</span><span class=${x.t}>${x.t=='in'?'+':'−'}${x.a}<button class=s onclick="A.mdel('${x.id}')" aria-label="Delete">✕</button></span></div>`).join('')+`</details>`};
+// ---------- tasks
+const dd=x=>x?Math.round((new Date(x)-new Date(td()))/864e5):99,
+eu=t=>{const d=Math.min(dd(t.dl),dd(t.pl));return d>=99?(t.ur||1):d<=0?5:d<=1?4:d<=3?3:d<=7?2:1},
+qd=t=>{const i=t.im>=3,u=eu(t)>=3;return i&&u?0:i?1:u?2:3},sc=t=>t.im*3+eu(t)*3-t.ef;
+let tf='all',tx=null;
+const QC=['#c8102e','#d9a93b','#4b8bb3','#9a8a8f'],QS=['🔥 Do now','📅 Plan','⚡ Quick','🍃 Later'],RP=['none','daily','weekly','monthly'],RL={none:'No repeat',daily:'Every day',weekly:'Every week',monthly:'Every month'},
+sl=(i,f,n)=>`<select onchange="A.tset('${i}','${f}',+this.value)">${[1,2,3,4,5].map(k=>`<option ${k==n?'selected':''}>${k}</option>`).join('')}</select>`,
+dch=(x,l)=>x?`<em class="${dd(x)<0?'od':''}">${l} ${x.slice(5)}</em>`:'',
+ted=t=>`<div class=ed><label class=fl>Task</label><input id=tni value="${esc(t.n)}" onchange="A.tset('${t.id}','n',this.value)"><div class=row><label class=fl style="flex:1">Plan to do<input type=date value="${t.pl||''}" onchange="A.tset('${t.id}','pl',this.value)"></label><label class=fl style="flex:1">Deadline<input type=date value="${t.dl||''}" onchange="A.tset('${t.id}','dl',this.value)"></label></div><div class=row><label class=fl style="flex:1">Repeat<select onchange="A.tset('${t.id}','rp',this.value)">${RP.map(r=>`<option value=${r} ${(t.rp||'none')==r?'selected':''}>${RL[r]}</option>`).join('')}</select></label><label class=fl style="flex:1">Effort${sl(t.id,'ef',t.ef)}</label><label class=fl style="flex:1">Importance${sl(t.id,'im',t.im)}</label></div><small>Urgency is automatic: <b>${eu(t)}/5</b>, from the days left until the plan date or deadline.</small><label class=fl>Notes</label><textarea rows=3 onchange="A.tset('${t.id}','no',this.value)">${esc(t.no)}</textarea><button onclick="A.tx('${t.id}')">Done editing</button></div>`,
+tcard=t=>{const q=qd(t);return`<div class="tc ${tx==t.id?'wide':''}" style="border-top-color:${QC[q]}"><div class=row><button class=ck onclick="A.tdone('${t.id}')" aria-label="Complete task">○</button><b class=tt onclick="A.tx('${t.id}')">${esc(t.n)}</b><button class=s onclick="A.tx('${t.id}')" aria-label="Edit">${tx==t.id?'✔':'✎'}</button><button class=s onclick="A.tdel('${t.id}')" aria-label="Delete">${dc==t.id?'Delete?':'✕'}</button></div><div class=tags><em style="background:${QC[q]}22;color:${QC[q]}">${QS[q]}</em>${dch(t.pl,'Do')}${dch(t.dl,'Due')}${t.rp&&t.rp!='none'?'<em>🔁 '+t.rp+'</em>':''}<em>+${10+t.ef*5} pts</em></div>${t.no?`<small>📝 ${esc(t.no.slice(0,70))}</small>`:''}${tx==t.id?ted(t):''}</div>`},
+vTask=()=>{const all=[...S.tasks].sort((a,b)=>qd(a)-qd(b)||sc(b)-sc(a)),n=k=>all.filter(t=>qd(t)==k).length,L=tf=='all'?all:all.filter(t=>qd(t)==+tf);
+const T=[['all',`All (${all.length})`],...QS.map((q,k)=>[''+k,`${q} (${n(k)})`]),['r','🎁 Rewards']];
+return`<div class=sum><span>Points<br><b>${S.pts}</b></span><span>Rewards claimed<br><b>${S.claimed}</b></span></div><div class="tabs sc">${T.map(([k,l])=>`<button class="${tf==k?'on':''}" onclick="A.tf('${k}')">${l}</button>`).join('')}</div>`+
+(tf=='r'?`<div class=row><input id=rn placeholder="New reward"><input id=rc type=number placeholder="Cost" style="max-width:90px"><button onclick="A.radd()">Add</button></div><div class=gal>`+S.rewards.map(r=>{const ok=S.pts>=r.c;return`<div class=tc style="border-top-color:#d9a93b"><b>🎁 ${esc(r.n)}</b><small>${r.c} pts</small><div class=bar><i style="width:${Math.min(100,S.pts/r.c*100)}%"></i></div><div class=row><button ${ok?'':'disabled'} onclick="A.rclaim('${r.id}')">${ok?'Claim':r.c-S.pts+' to go'}</button><button class=s onclick="A.rdel('${r.id}')">✕</button></div></div>`}).join('')+`</div>`+(S.rewards.length?'':'<p>Add a treat you want to earn.</p>')
+:`<div class=row><input id=tn placeholder="Quick add, then press Enter" onkeydown="event.key=='Enter'&&A.tadd()"><button onclick="A.tnew()">＋ New</button></div><div class=gal>${L.map(tcard).join('')}</div>`+(L.length?'':'<p>Nothing here yet. Tap ＋ New.</p>'))};
+// ---------- timer / tv / radio
+const dur={f:1500,b:300},fmt=n=>`${pad(Math.floor(n/60))}:${pad(n%60)}`;
+let T={m:'f',left:1500,run:0,end:0,iv:0};
+const tick2=()=>{T.left=Math.max(0,Math.ceil((T.end-Date.now())/1000));const e=$('#tclk');if(e)e.textContent=fmt(T.left);if(!T.left){clearInterval(T.iv);T.run=0;if(T.m=='f'){S.focus[td()]=(S.focus[td()]||0)+1;xp(20);save()}navigator.vibrate?.([300,100,300]);T.m=T.m=='f'?'b':'f';T.left=dur[T.m];if(curF==vTimer)R()}drawT()};
+const vTimer=()=>{drawT();const tot=Object.values(S.focus).reduce((a,b)=>a+b,0);return`<div class=sum><span>Focus today<br><b>${S.focus[td()]||0}</b></span><span>All time<br><b>${tot}</b></span></div><div class=tabs><button class="${T.m=='f'?'on':''}" onclick="A.tmode('f')">Focus 25</button><button class="${T.m=='b'?'on':''}" onclick="A.tmode('b')">Break 5</button></div><div id=tclk style="font:700 72px 'Dancing Script',Mali,cursive;text-align:center;color:var(--r)">${fmt(T.left)}</div><div class=row><button style="flex:1" onclick="A.tgo()">${T.run?'Pause':'Start'}</button><button class=s onclick="A.trs()">Reset</button></div><button class=s style="margin:8px 0" onclick="A.tpip()">🪟 Float timer</button><small>Finish a focus session to earn 20 XP. Float timer opens a small always-on-top window so you can use other apps (works best on Chrome and recent iPad/iPhone Safari).</small>`};
+const TS=['To watch','Watching','Done'],yt=u=>window.open(u,'_blank','noopener');
+const vTV=()=>{const body=[0,1,2].map(s=>{const L=S.tv.filter(x=>x.s==s);return L.length?`<h4>${TS[s]} (${L.length})</h4><div class=gal>${L.map(x=>`<div class=tc style="border-top-color:${QC[s+1]}"><b style="cursor:pointer" onclick="A.ytn('${x.id}')">▶ ${esc(x.n)}</b><div class=tags><em>${esc(x.k)}</em></div><div class=row><button class=s onclick="A.vnext('${x.id}')">${s<2?'→ '+TS[s+1]:'↺ Again'}</button><button class=s onclick="A.vdel('${x.id}')">✕</button></div></div>`).join('')}</div>`:''}).join('');
+return`<div class=row><input id=vq placeholder="Search YouTube" onkeydown="event.key=='Enter'&&A.ytq('v')"><button onclick="A.ytq('v')">Search</button></div><button style="width:100%" onclick="yt('https://www.youtube.com')">▶ Open YouTube</button><h4>My watchlist</h4><small>Tap a title to search it on YouTube.</small><div class=row><input id=vn placeholder="Show, channel or video"><select id=vk style="max-width:100px"><option>Video</option><option>Series</option><option>Movie</option><option>Channel</option></select><button onclick="A.vadd()">Add</button></div>`+(body||'<p>Nothing saved yet.</p>')};
+const vRadio=()=>`<div class=row><input id=rq placeholder="Search YouTube Music" onkeydown="event.key=='Enter'&&A.ytq('r')"><button onclick="A.ytq('r')">Search</button></div><button style="width:100%" onclick="yt('https://music.youtube.com')">🎵 Open YouTube Music</button><h4>My playlists</h4><input id=rdn placeholder="Playlist name"><div class=row><input id=rdu placeholder="Paste a YouTube Music link"><button onclick="A.oadd()">Save</button></div>`+(S.radio.map(x=>`<div class=row><a href="${esc(x.u)}" target=_blank rel=noopener style="flex:1;color:var(--r);font-weight:700">🎵 ${esc(x.n)}</a><button class=s onclick="A.odel('${x.id}')">✕</button></div>`).join('')||'<p>Paste a playlist link to keep it here.</p>');
+const WX=['☀️ Sunny','⛅ Partly cloudy','☁️ Cloudy','🌧 Rainy','⛈ Stormy','🌫 Foggy','🥵 Hot','❄️ Cold'];
+let pc,pv;
+function drawT(){if(!pc)return;const x=pc.getContext('2d');x.fillStyle='#a8203a';x.fillRect(0,0,320,180);x.fillStyle='#fff3e0';x.textAlign='center';x.font='bold 78px serif';x.fillText(fmt(T.left),160,105);x.font='22px sans-serif';x.fillText((T.m=='f'?'♥ Focus':'☕ Break')+(T.run?'':' · paused'),160,150)}
+// ---------- manifest hub
+const PA=["What would make today feel magical?","Who do I want to be today?","What am I ready to receive?","Which small action moves me closer to my vision?","What am I excited about today?","How do I want to feel today, and how will I create it?","What would my future self thank me for today?"],
+PN=["What made me smile today?","What did I learn about myself?","What am I proud of today?","What would I do differently tomorrow?","Where did I feel most aligned today?","What am I letting go of tonight?","What small win deserves a celebration?"],
+AF=["I am worthy of everything I desire.","I attract love, abundance and joy.","I am becoming the best version of myself.","Everything I need is already on its way to me.","I am calm, confident and grateful.","My dreams are unfolding beautifully."],
+MG=[['💝','Loving'],['🌺','Content'],['💭','Reflective'],['🌟','Energetic'],['🌸','Peaceful'],['💫','Motivated'],['🙏','Grateful'],['🌧','Anxious'],['😴','Tired']];
+let md=td(),mtab='am',wf='all';
+const pick=(a,d,o)=>{const n=Math.floor(new Date(d+'T12:00:00')/864e5)+(o||0);return a[((n%a.length)+a.length)%a.length]},dayoff=(d,n)=>td(new Date(+new Date(d+'T12:00:00')+n*864e5)),
+mw=(k,l,r=2)=>`<label class=fl>${l}</label><textarea rows=${r} oninput="A.mf('${k}',this.value)">${esc((S.mj[md]||{})[k])}</textarea>`,
+auto=d=>{const H=S.habits,hd=H.filter(h=>S.hl[d+h.id]).length,tn=(S.tdn||{})[d]||0,ml=S.food.filter(x=>x.d==d).length,wa=(S.water||{})[d]||0,fo=S.focus[d]||0,P=[];
+if(H.length)P.push(`ticked ${hd} of ${H.length} habits`);if(tn)P.push(`finished ${tn} task${tn>1?'s':''}`);if(ml)P.push(`logged ${ml} meal${ml>1?'s':''}`);if(wa)P.push(`drank ${wa} glass${wa>1?'es':''} of water`);if(fo)P.push(`completed ${fo} focus session${fo>1?'s':''}`);const r=H.length?hd/H.length:0;
+return(P.length?`On this day you ${P.join(', ')}. `:'No activity recorded for this day. ')+(r>=.7?'Beautiful consistency, you are showing up for your vision. ✨':r>0?'Every small step counts. Be proud of what you did. 🌷':'Tomorrow is a fresh page. Be gentle with yourself. 🌙')};
+const vMani=()=>{const f=S.mj[md]||{},T=[['am','☀️ Morning'],['pm','🌙 Night'],['vg','🎯 Vision'],['wn','🏆 Wins']],
+nav=`<div class=row><button class=s onclick="A.mday(-1)">◀</button><input type=date value="${md}" onchange="A.mset(this.value)" style="max-width:170px"><button class=s onclick="A.mday(1)">▶</button></div>`,
+mood=`<h4>How I feel</h4><div class=chips>${MG.map(([e,n])=>`<button class="s ${(f.moods||[]).includes(n)?'on':''}" onclick="A.mmood('${n}')">${e} ${n}</button>`).join('')}</div>`;
+let b=`<div class="tabs sc">${T.map(([k,l])=>`<button class="${mtab==k?'on':''}" onclick="mtab='${k}';R()">${l}</button>`).join('')}</div>`;
+if(mtab=='am'){const af=pick([...S.affs,...AF],md,f.ao),tm=(S.mj[dayoff(md,-1)]||{}).tom;
+b+=nav+`<div class=card style="background:#fff3e0;text-align:center"><small>Affirmation of the day</small><div style="font:700 22px 'Dancing Script',Mali,Mali,cursive;color:var(--r)">${esc(af)}</div><div class=row><button class=s onclick="A.mshuf('ao')">🔀 Another</button><button class="s ${f.said?'on':''}" onclick="A.mtog('said')">${f.said?'✔ Said it':'Say it aloud'}</button></div></div>`+mw('aff','My own affirmation')+`<details><summary>My affirmation list</summary>${S.affs.map((a,i)=>`<div class=row><span>${esc(a)}</span><button class=s onclick="A.adel(${i})">✕</button></div>`).join('')}<div class=row><input id=afn placeholder="Add an affirmation"><button onclick="A.aadd()">Add</button></div></details>`+
+`<h4>✨ Guided prompt</h4><div class=row><i style="flex:1">${esc(pick(PA,md,f.po))}</i><button class=s onclick="A.mshuf('po')">🔀</button></div>`+mw('pa','My answer',3)+(tm?`<div class=card><small>The intention you set last night</small><br>${esc(tm)}</div>`:'')+mw('int',"Today's intention")+mw('gra',"I'm grateful for (3 things)",3)+mw('goal','My top goal for today')+mw('man',"What I'm manifesting")+mw('act',"Aligned action I'll take today")+`<button class="${f.viz?'on':''}" style="width:100%;margin-top:8px" onclick="A.mtog('viz')">${f.viz?'✔ Visualized my vision':'🔮 I visualized my vision (2 min)'}</button>`+mood}
+else if(mtab=='pm'){b+=nav+`<div class=card style="background:#fff3e0"><small>🌙 Automated reflection</small><br>${esc(auto(md))}</div><h4>✨ Reflection prompt</h4><div class=row><i style="flex:1">${esc(pick(PN,md,f.no2))}</i><button class=s onclick="A.mshuf('no2')">🔀</button></div>`+mw('pa2','My answer',3)+mw('well','What went well today')+mw('les','A lesson I learned')+mw('win',"One win I'm celebrating")+`<button class=s onclick="A.wfrom()">🏆 Add this win to my log</button>`+mw('lim','Limiting belief I release')+mw('emp','Chosen empowered thought')+mw('gran','Grateful tonight')+mw('tom',"Tomorrow's intention")+mood+`<h4>How I felt today (1–10)</h4><div class=chips>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="s ${f.rate===n?'on':''}" onclick="A.mrate(${n})">${n}</button>`).join('')}</div>`}
+else if(mtab=='vg'){b+=`<div class=row><input id=vgn placeholder="A long-term vision goal"><input id=vgd type=date style="max-width:150px"></div><button style="width:100%" onclick="A.vgadd()">Add goal</button>`+(S.vg.map(g=>`<div class=card><div class=row>${ring(g.p||0,'#a8203a')}<b style="flex:1">${esc(g.n)}</b><button class=s onclick="A.vgdel('${g.id}')">${dc==g.id?'Delete?':'✕'}</button></div><small>${g.d?'Target '+g.d+' · '+Math.max(0,dd(g.d))+' days left':'No target date'}</small><input type=range min=0 max=100 step=5 value="${g.p||0}" onchange="A.vgset('${g.id}','p',+this.value)"><textarea rows=2 placeholder="Why this matters, next steps…" onchange="A.vgset('${g.id}','w',this.value)">${esc(g.w)}</textarea></div>`).join('')||'<p>Dream big. Add your first long-term vision.</p>')}
+else{const t=td(),L=S.wins.filter(w=>wf=='all'||(wf=='t'?w.d==t:wf=='w'?w.d>=ago(6):w.d.startsWith(t.slice(0,7))));
+b+=`<div class=row><input id=wnt placeholder="Celebrate a win 🎉" onkeydown="event.key=='Enter'&&A.wadd()"><button onclick="A.wadd()">Add</button></div><div class="tabs sc">${[['t','Today'],['w','Week'],['m','Month'],['all','All time']].map(([k,l])=>`<button class="${wf==k?'on':''}" onclick="wf='${k}';R()">${l}</button>`).join('')}</div>`+(L.length?[...L].reverse().map(w=>`<div class=card><div class=row><span>🎉 ${esc(w.t)}</span><button class=s onclick="A.wdel('${w.id}')" aria-label="Delete">✕</button></div><small>${w.d}</small></div>`).join(''):'<p>No wins here yet. You deserve to celebrate!</p>')+`<small>${S.wins.length} wins so far</small>`}
+return b};
+let acct='';
+const AV=()=>S.prof.img?`<img src="${S.prof.img}" alt="">`:'♥',ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform=='MacIntel'&&navigator.maxTouchPoints>1),sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const vSet=()=>`<h4>👤 Profile</h4><div class=row><span class="av big">${AV()}</span><div style="flex:1"><input id=pn placeholder="Your name" value="${esc(S.prof.name)}" onchange="A.pname(this.value)"><input type=file accept="image/*" onchange="A.ppic(this)"></div></div><div class=sum><span>Level<br><b>${1+Math.floor(S.xp/100)}</b></span><span>Total XP<br><b>${S.xp}</b></span></div><div class=bar><i style="width:${S.xp%100}%"></i></div><small>${100-S.xp%100} XP to the next level</small><p>${acct?`Signed in as <b>${esc(acct)}</b>`:'Not signed in. Your data stays on this device.'}</p>${acct?'<button class=s onclick="A.logout()">Sign out</button>':`<div class=ed><label>Email<input id=lemail type=email placeholder="you@example.com"></label><label>Password<input id=lpw type=password></label></div><div class=row><button style="flex:1" onclick="A.login()">Sign in</button><button onclick="A.signup()">Create account</button></div>`}
 <h4>🛋 Arrange room</h4><small>Drag any furniture to where you want it.</small><button style="width:100%" onclick="A.arr()">Start arranging</button><button class=s onclick="A.rlay()">↺ Reset layout</button>
-<h4>📲 Install on this device</h4>${sa ? "<p>✅ Already installed.</p>" : '<button style="width:100%" onclick="A.inst()">Install app</button>'}<div class=card><b>iPhone / iPad${ios ? " (this device)" : ""}</b><br><small>Open in Safari, tap Share, then Add to Home Screen, then Add.</small></div><div class=card><b>Android / Chrome${ios ? "" : " (this device)"}</b><br><small>Chrome menu ⋮, then Install app (or Add to Home screen).</small></div>`;
-      // ---------- level, install, arrange
-      const xp = (n) => {
-        S.xp = Math.max(0, (S.xp || 0) + n);
-      };
-      function badge() {
-        $("#lv").innerHTML =
-          `<span class=av>${AV()}</span>${esc(S.prof.name || "")} Lv ${1 + Math.floor(S.xp / 100)}<i style="width:${S.xp % 100}%"></i>`;
-      }
-      let dip,
-        arr = 0,
-        dg;
-      const sv = $("svg");
-      addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        dip = e;
-      });
-      function applyPos() {
-        document.querySelectorAll(".w").forEach((g) => {
-          const [b, c] = g.dataset.b.split(" ").map(Number),
-            p = S.pos[g.dataset.k] || [0, 0];
-          g.setAttribute("transform", `translate(${b + p[0]} ${c + p[1]})`);
-        });
-      }
-      const pt = (e) => {
-        const q = sv.createSVGPoint();
-        q.x = e.clientX;
-        q.y = e.clientY;
-        return q.matrixTransform(sv.getScreenCTM().inverse());
-      };
-      sv.addEventListener("pointerdown", (e) => {
-        if (!arr) return;
-        const g = e.target.closest(".w");
-        if (!g) return;
-        e.preventDefault();
-        sv.setPointerCapture(e.pointerId);
-        const p = pt(e),
-          k = g.dataset.k;
-        dg = { k, x: p.x, y: p.y, o: [...(S.pos[k] || [0, 0])] };
-      });
-      sv.addEventListener("pointermove", (e) => {
-        if (!dg) return;
-        const p = pt(e);
-        S.pos[dg.k] = [
-          Math.round(dg.o[0] + p.x - dg.x),
-          Math.round(dg.o[1] + p.y - dg.y),
-        ];
-        applyPos();
-      });
-      sv.addEventListener("pointerup", () => {
-        if (dg) {
-          save();
-          dg = null;
-        }
-      });
-      applyPos();
-      badge();
-      // ---------- actions
-      const A = {
-        open: (k) =>
-          arr
-            ? 0
-            : {
-                set: () => show("⚙ Settings", vSet),
-                timer: () => show("⏱ Focus timer", vTimer),
-                mani: () => {
-                  bk = "m";
-                  pg = 1e9;
-                  lst = 0;
-                  show("✨ Manifest corner", vBook);
-                },
-                tv: () => show("📺 Watchlist", vTV),
-                radio: () => show("📻 Radio", vRadio),
-                cal: () => show("🗓 Calendar", vCal),
-                hab: () => show("📌 Habit board", vHab),
-                food: () => show("🍎 Fridge", vFood),
-                book: () => {
-                  bk = "j";
-                  pg = 1e9;
-                  lst = 0;
-                  show("📚 Journal shelf", vBook);
-                },
-                safe: () => show("🔐 Safe box", vMoney),
-                task: () => show("💻 Desk", vTask),
-              }[k](),
-        close: () => {
-          $("#m").hidden = true;
-          cur = 0;
-        },
-        login: async () => {
-          if (!fb || !FB.apiKey)
-            return alert("Firebase config was not loaded. Check firebase-config.js.");
-          const email = v("lemail").trim(),
-            pw = v("lpw");
-          if (!email || !pw) return alert("Enter your email and password.");
-          try {
-            await fb.a.signInWithEmailAndPassword(fb.auth, email, pw);
-            R();
-          } catch (e) {
-            alert(`Sign-in failed: ${e.message}`);
-          }
-        },
-        signup: async () => {
-          if (!fb || !FB.apiKey)
-            return alert("Firebase config was not loaded. Check firebase-config.js.");
-          const email = v("lemail").trim(),
-            pw = v("lpw");
-          if (!email || !pw) return alert("Enter your email and password.");
-          try {
-            await fb.a.createUserWithEmailAndPassword(fb.auth, email, pw);
-            R();
-          } catch (e) {
-            alert(`Could not create account: ${e.message}`);
-          }
-        },
-        day: (k) => {
-          cd = k;
-          R();
-        },
-        nav: (n) => {
-          cm = new Date(cm.getFullYear(), cm.getMonth() + n, 1);
-          R();
-        },
-        gcal: () =>
-          window.open(
-            "https://calendar.google.com/calendar/u/0/r",
-            "_blank",
-            "noopener",
-          ),
-        cadd: () => {
-          const t = v("et").trim();
-          if (!t) return;
-          const stamp = (time) => cd.replaceAll("-", "") + "T" + time.replace(":", "") + "00";
-          const url =
-            "https://calendar.google.com/calendar/u/0/r/eventedit?text=" +
-            encodeURIComponent(t) +
-            "&dates=" +
-            stamp(v("es")) +
-            "/" +
-            stamp(v("ee"));
-          window.open(url, "_blank", "noopener");
-        },
-        hadd: () => {
-          const n = v("hn").trim();
-          if (n) {
-            S.habits.push({ id: id(), n });
-            save();
-            R();
-          }
-        },
-        hx: (i) => {
-          hx = hx == i ? null : i;
-          R();
-        },
-        hset: (i, x) => {
-          if (x.trim()) {
-            S.habits.find((h) => h.id == i).n = x.trim();
-            save();
-          }
-        },
-        hdel: (i) => {
-          if (sure(i)) {
-            S.habits = S.habits.filter((x) => x.id != i);
-            save();
-            R();
-          }
-        },
-        tick: (d, i) => {
-          S.hl[d + i] = !S.hl[d + i];
-          xp(S.hl[d + i] ? 5 : -5);
-          save();
-          R();
-        },
-        note: () => {
-          S.notes[td()] = v("nt");
-          save();
-        },
-        pic: (i) => {
-          const f = i.files[0];
-          if (!f) return;
-          const im = new Image();
-          im.onload = () => {
-            const c = document.createElement("canvas");
-            c.width = c.height = 96;
-            const s = Math.min(im.width, im.height);
-            c.getContext("2d").drawImage(
-              im,
-              (im.width - s) / 2,
-              (im.height - s) / 2,
-              s,
-              s,
-              0,
-              0,
-              96,
-              96,
-            );
-            fimg = c.toDataURL("image/jpeg", 0.6);
-          };
-          im.src = URL.createObjectURL(f);
-        },
-        fadd: () => {
-          const n = v("fn").trim();
-          if (!n) return;
-          const x = {
-            id: id(),
-            d: fd,
-            n,
-            mt: v("fmt"),
-            tm: v("ftm"),
-            k: +v("fk") || 0,
-            p: +v("fp") || 0,
-            c: +v("fc") || 0,
-            f: +v("ff") || 0,
-            img: fimg,
-          };
-          S.food.push(x);
-          if ($("#fsv").checked) savefav(x);
-          fimg = "";
-          xp(3);
-          save();
-          R();
-        },
-        fdel: (i) => {
-          S.food = S.food.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        fav: (i) => {
-          savefav(S.food.find((x) => x.id == i));
-          save();
-          R();
-        },
-        fuse: (i) => {
-          const x = S.favs.find((y) => y.id == i);
-          S.food.push({ ...x, id: id(), d: fd, mt: v("fmt"), tm: v("ftm") });
-          xp(3);
-          save();
-          R();
-        },
-        fvdel: (i) => {
-          S.favs = S.favs.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        fw: (n) => {
-          fd = td(new Date(+new Date(fd + "T12:00:00") + n * 864e5));
-          R();
-        },
-        fm: (n) => {
-          const x = new Date(fd + "T12:00:00");
-          x.setDate(1);
-          x.setMonth(x.getMonth() + n);
-          fd = td(x);
-          R();
-        },
-        goal: () => {
-          const k = +v("gk"),
-            p = +v("gp"),
-            c = +v("gc"),
-            f = +v("gf");
-          if (k > 0 && p > 0 && c > 0 && f > 0) {
-            S.goals = { k, p, c, f };
-            save();
-            R();
-          }
-        },
-        bf: (k, x) => {
-          pgs()[pg].f[k] = x;
-          save();
-        },
-        bmood: (m) => {
-          const p = pgs()[pg];
-          p.f.mood = p.f.mood === m ? null : m;
-          save();
-          R();
-        },
-        brate: (n) => {
-          const p = pgs()[pg];
-          p.f.rate = p.f.rate === n ? null : n;
-          save();
-          R();
-        },
-        bdate: (x) => {
-          pgs()[pg].d = x || td();
-          srt();
-          save();
-          R();
-        },
-        bgo: (i) => {
-          pg = i;
-          lst = 0;
-          fl = 1;
-          R();
-        },
-        bp: (k) => {
-          const B = pgs();
-          if (k == 2) {
-            B.push({ d: td(), f: {} });
-            xp(5);
-            pg = B.length - 1;
-            srt();
-            fl = 1;
-          } else if (k < 0) {
-            pg = Math.max(0, pg - 1);
-            fl = 2;
-          } else {
-            pg = Math.min(B.length - 1, pg + 1);
-            fl = 1;
-          }
-          save();
-          R();
-        },
-        madd: () => {
-          const a = +v("ma");
-          if (!a) return;
-          S.money.push({
-            id: id(),
-            t: v("mt"),
-            a: Math.abs(a),
-            cat: v("mcat"),
-            c: v("mc"),
-            d: v("md") || td(),
-          });
-          xp(2);
-          save();
-          R();
-        },
-        mdel: (i) => {
-          S.money = S.money.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        mnav: (n) => {
-          const a = new Date(ma0 + "T12:00:00");
-          if (mr == "y") a.setFullYear(a.getFullYear() + n);
-          else if (mr == "m") {
-            a.setDate(1);
-            a.setMonth(a.getMonth() + n);
-          } else a.setDate(a.getDate() + 7 * n);
-          ma0 = td(a);
-          R();
-        },
-        mbud: (c, x) => {
-          S.bud[c] = +x || 0;
-          save();
-          R();
-        },
-        ytq: (k) => {
-          const q = v(k == "v" ? "vq" : "rq").trim(),
-            h =
-              k == "v"
-                ? "https://www.youtube.com"
-                : "https://music.youtube.com";
-          yt(
-            q
-              ? (k == "v" ? h + "/results?search_query=" : h + "/search?q=") +
-                  encodeURIComponent(q)
-              : h,
-          );
-        },
-        ytn: (i) =>
-          yt(
-            "https://www.youtube.com/results?search_query=" +
-              encodeURIComponent(S.tv.find((x) => x.id == i).n),
-          ),
-        tadd: () => {
-          const n = v("tn").trim();
-          if (!n) return;
-          const t = { id: id(), n, dl: "", ef: 2, im: 3, ur: 1, no: "" };
-          S.tasks.push(t);
-          tx = t.id;
-          save();
-          R();
-        },
-        tx: (i) => {
-          tx = tx == i ? null : i;
-          R();
-          setTimeout(
-            () =>
-              document
-                .querySelector(".tc.wide")
-                ?.scrollIntoView({ block: "nearest" }),
-            50,
-          );
-        },
-        tf: (k) => {
-          tf = k;
-          R();
-        },
-        tset: (i, f, x) => {
-          if (f == "n" && !x.trim()) return;
-          S.tasks.find((t) => t.id == i)[f] = x;
-          save();
-          R();
-        },
-        tdone: (i) => {
-          const t = S.tasks.find((x) => x.id == i);
-          S.pts += 10 + t.ef * 5;
-          xp(10 + t.ef * 5);
-          S.tasks = S.tasks.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        tdel: (i) => {
-          if (sure(i)) {
-            S.tasks = S.tasks.filter((x) => x.id != i);
-            save();
-            R();
-          }
-        },
-        radd: () => {
-          if (v("rn") && +v("rc") > 0) {
-            S.rewards.push({ id: id(), n: v("rn"), c: +v("rc") });
-            save();
-            R();
-          }
-        },
-        rclaim: (i) => {
-          const r = S.rewards.find((x) => x.id == i);
-          if (S.pts < r.c) return alert("Not enough points yet. Keep going!");
-          S.pts -= r.c;
-          S.claimed++;
-          S.rewards = S.rewards.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        arr: () => {
-          arr = !arr;
-          document.body.classList.toggle("arr", arr);
-          $("#ab").hidden = !arr;
-          if (arr) A.close();
-        },
-        rlay: () => {
-          S.pos = {};
-          save();
-          applyPos();
-        },
-        pname: (x) => {
-          S.prof.name = x.trim();
-          save();
-        },
-        logout: async () => {
-          try {
-            await fb.a.signOut(fb.auth);
-          } catch {}
-          uid = null;
-          acct = "";
-          R();
-        },
-        ppic: (i) => {
-          const f = i.files[0];
-          if (!f) return;
-          const im = new Image();
-          im.onload = () => {
-            const c = document.createElement("canvas");
-            c.width = c.height = 96;
-            const q = Math.min(im.width, im.height);
-            c.getContext("2d").drawImage(
-              im,
-              (im.width - q) / 2,
-              (im.height - q) / 2,
-              q,
-              q,
-              0,
-              0,
-              96,
-              96,
-            );
-            S.prof.img = c.toDataURL("image/jpeg", 0.7);
-            save();
-            R();
-          };
-          im.src = URL.createObjectURL(f);
-        },
-        inst: async () => {
-          if (dip) {
-            dip.prompt();
-          } else
-            alert(
-              "On iPhone/iPad: tap Share, then Add to Home Screen. On Android: open the browser menu and tap Install app.",
-            );
-        },
-        tmode: (k) => {
-          clearInterval(T.iv);
-          T.run = 0;
-          T.m = k;
-          T.left = dur[k];
-          R();
-        },
-        trs: () => {
-          clearInterval(T.iv);
-          T.run = 0;
-          T.left = dur[T.m];
-          R();
-        },
-        tgo: () => {
-          if (T.run) {
-            clearInterval(T.iv);
-            T.run = 0;
-            T.left = Math.ceil((T.end - Date.now()) / 1000);
-          } else {
-            T.end = Date.now() + T.left * 1000;
-            T.run = 1;
-            T.iv = setInterval(tick2, 500);
-          }
-          R();
-        },
-        vadd: () => {
-          const n = v("vn").trim();
-          if (n) {
-            S.tv.push({ id: id(), n, k: v("vk"), s: 0 });
-            save();
-            R();
-          }
-        },
-        vnext: (i) => {
-          const x = S.tv.find((y) => y.id == i);
-          x.s = (x.s + 1) % 3;
-          if (x.s == 2) xp(5);
-          save();
-          R();
-        },
-        vdel: (i) => {
-          S.tv = S.tv.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        oadd: () => {
-          const n = v("rdn").trim();
-          let u = v("rdu").trim();
-          if (!n || !u) return;
-          if (!/^https?:\/\//i.test(u)) u = "https://" + u;
-          S.radio.push({ id: id(), n, u });
-          save();
-          R();
-        },
-        odel: (i) => {
-          S.radio = S.radio.filter((x) => x.id != i);
-          save();
-          R();
-        },
-        rdel: (i) => {
-          S.rewards = S.rewards.filter((x) => x.id != i);
-          save();
-          R();
-        },
-      };
-      document
-        .querySelectorAll(".f")
-        .forEach((g) => (g.onkeydown = (e) => e.key == "Enter" && g.onclick()));
-      // ---------- Firebase sync (loads only when configured; app works locally without it)
-      (async () => {
-        if (!FB.apiKey) return;
-        try {
-          const u = "https://www.gstatic.com/firebasejs/10.12.2/firebase-",
-            [a, p, s] = await Promise.all(
-              ["app", "auth", "firestore"].map((m) => import(u + m + ".js")),
-            ),
-            app = a.initializeApp(FB);
-          fb = { a: p, s, auth: p.getAuth(app), db: s.getFirestore(app) };
-          p.onAuthStateChanged(fb.auth, (us) => {
-            uid = us?.uid;
-            acct = us?.email || "";
-            if (curF == vSet) R();
-            if (uid)
-              s.onSnapshot(s.doc(fb.db, "users", uid), (d) => {
-                const r = d.data();
-                if (!r) return push();
-                if (r.t > S.t) {
-                  S = { ...D, ...r };
-                  localStorage[KEY] = JSON.stringify(S);
-                  applyPos();
-                  badge();
-                  if (!document.activeElement.matches("input,textarea")) R();
-                }
-              });
-          });
-        } catch (e) {
-          console.error("Firebase initialization failed", e);
-          alert(`Firebase setup failed: ${e.message}`);
-        }
-      })();
-      if ("serviceWorker" in navigator)
-        navigator.serviceWorker.register("sw.js");
-    </script>
-    <div id="ab" class="ab" hidden>
-      <button onclick="A.arr()">✅ Done arranging</button
-      ><button class="s" onclick="A.rlay()">↺ Reset</button>
-    </div>
-    <div id="m" hidden onclick="event.target.id == 'm' && A.close()">
-      <div class="sheet" role="dialog" aria-labelledby="ti">
-        <div>
-          <h3 id="ti"></h3>
-          <button class="s" onclick="A.close()" aria-label="Close">✕</button>
-        </div>
-        <div id="bd"></div>
-      </div>
-    </div>
-  </body>
-</html>
+<h4>📲 Install on this device</h4>${sa?'<p>✅ Already installed.</p>':'<button style="width:100%" onclick="A.inst()">Install app</button>'}<div class=card><b>iPhone / iPad${ios?' (this device)':''}</b><br><small>Open in Safari, tap Share, then Add to Home Screen, then Add.</small></div><div class=card><b>Android / Chrome${ios?'':' (this device)'}</b><br><small>Chrome menu ⋮, then Install app (or Add to Home screen).</small></div>`;
+// ---------- level, install, arrange
+const xp=n=>{S.xp=Math.max(0,(S.xp||0)+n)};
+function badge(){$('#lv').innerHTML=`<span class=av>${AV()}</span>${esc(S.prof.name||'')} Lv ${1+Math.floor(S.xp/100)}<i style="width:${S.xp%100}%"></i>`}
+let dip,arr=0,dg,selK,lockAspect=0,dockPos=null,dragDock=null;const sv=$('svg'),centers=new Map();
+document.querySelectorAll('.w').forEach(g=>{const b=g.getBBox();centers.set(g.dataset.k,[b.x+b.width/2,b.y+b.height/2])});
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e});
+function applyPos(){document.querySelectorAll('.w').forEach(g=>{const k=g.dataset.k,[b,c]=g.dataset.b.split(' ').map(Number),p=S.pos[k]||[0,0],[sx,sy]=S.size[k]||[1,1],[cx,cy]=centers.get(k)||[0,0];g.setAttribute('transform',`translate(${b+p[0]+cx-cx*sx} ${c+p[1]+cy-cy*sy}) scale(${sx} ${sy})`);
+const lab=g.querySelector('text.lb');if(lab){const lp=S.labelPos[k]||[0,0],lf=S.labelFont[k];lab.setAttribute('transform',`translate(${lp[0]} ${lp[1]})`);lab.style.fontSize=lf?.s?lf.s+'px':'';lab.style.fontFamily=lf?.f||'';lab.style.display=S.labelHide[k]?'none':''}})}
+const pt=e=>{const q=sv.createSVGPoint();q.x=e.clientX;q.y=e.clientY;return q.matrixTransform(sv.getScreenCTM().inverse())};
+function updateLock(){const b=$('#lk');if(b){b.textContent=lockAspect?'🔗 Locked':'🔗 Free';b.classList.toggle('on',!!lockAspect)}}
+function updateHide(){const b=$('#lh');if(b){b.textContent=S.labelHide[selK]?'🙈 Hidden':'👁 Visible';b.classList.toggle('on',!!S.labelHide[selK])}}
+sv.addEventListener('pointerdown',e=>{if(!arr)return;const g=e.target.closest('.w');if(!g)return;e.preventDefault();sv.setPointerCapture(e.pointerId);const p=pt(e),k=g.dataset.k;selK=k;const sz=$('#sz');if(sz){sz.hidden=false;sz.dataset.k=k;$('#szn').textContent=g.querySelector('text.lb')?.textContent||k;const lf=S.labelFont[k];if($('#lf'))$('#lf').value=lf?.f||'Dancing Script';updateHide();updateLock()}dg={k,x:p.x,y:p.y,o:[...(S.pos[k]||[0,0])]}});
+sv.addEventListener('pointermove',e=>{if(!dg)return;const p=pt(e);S.pos[dg.k]=[Math.round(dg.o[0]+p.x-dg.x),Math.round(dg.o[1]+p.y-dg.y)];applyPos()});
+sv.addEventListener('pointerup',()=>{if(dg){save();dg=null}});
+document.addEventListener('DOMContentLoaded',()=>{const dh=$('#dockhead');if(!dh)return;
+  dh.addEventListener('pointerdown',e=>{e.preventDefault();try{dh.setPointerCapture(e.pointerId)}catch{}const r=$('#ab').getBoundingClientRect();dragDock={x:e.clientX,y:e.clientY,l:r.left,t:r.top}});
+  dh.addEventListener('pointermove',e=>{if(!dragDock)return;const ab=$('#ab'),x=Math.max(0,Math.min(innerWidth-ab.offsetWidth,dragDock.l+e.clientX-dragDock.x)),y=Math.max(0,Math.min(innerHeight-ab.offsetHeight,dragDock.t+e.clientY-dragDock.y));ab.style.left=x+'px';ab.style.top=y+'px';dockPos=[x,y]});
+  dh.addEventListener('pointerup',()=>{dragDock=null});
+});
+applyPos();badge();
+// ---------- actions
+const A={
+open:k=>arr?0:({set:()=>show('⚙ Settings',vSet),timer:()=>show('⏱ Focus timer',vTimer),mani:()=>{md=td();show('✨ Manifest corner',vMani)},tv:()=>show('📺 Watchlist',vTV),radio:()=>show('📻 Radio',vRadio),cal:()=>show('🗓 Calendar',vCal),hab:()=>show('📌 Habit board',vHab),food:()=>show('🍎 Fridge',vFood),book:()=>{bk='j';pg=1e9;lst=0;show('📚 Journal shelf',vBook)},safe:()=>show('🔐 Safe box',vMoney),task:()=>show('💻 Desk',vTask)})[k](),
+close:()=>{$('#m').hidden=true;cur=0},
+login:async()=>{if(!fb||!FB.apiKey)return alert('Firebase config was not loaded. Check firebase-config.js.');const email=v('lemail').trim(),pw=v('lpw');if(!email||!pw)return alert('Enter your email and password.');try{await fb.a.signInWithEmailAndPassword(fb.auth,email,pw);R()}catch(e){alert(`Sign-in failed: ${e.message}`)}},
+signup:async()=>{if(!fb||!FB.apiKey)return alert('Firebase config was not loaded. Check firebase-config.js.');const email=v('lemail').trim(),pw=v('lpw');if(!email||!pw)return alert('Enter your email and password.');try{await fb.a.createUserWithEmailAndPassword(fb.auth,email,pw);R()}catch(e){alert(`Could not create account: ${e.message}`)}},
+gcal:()=>window.open('https://calendar.google.com/calendar/u/0/r','_blank','noopener'),
+day:k=>{cd=k;R()},nav:n=>{cm=new Date(cm.getFullYear(),cm.getMonth()+n,1);R()},
+cadd:()=>{const t=v('et').trim();if(!t)return;const stamp=time=>cd.replaceAll('-','')+'T'+time.replace(':','')+'00';window.open('https://calendar.google.com/calendar/u/0/r/eventedit?text='+encodeURIComponent(t)+'&dates='+stamp(v('es'))+'/'+stamp(v('ee')),'_blank','noopener')},
+hadd:()=>{const n=v('hn').trim();if(n){S.habits.push({id:id(),n});save();R()}},
+hx:i=>{hx=hx==i?null:i;R()},hset:(i,x)=>{if(x.trim()){S.habits.find(h=>h.id==i).n=x.trim();save()}},hdel:i=>{if(sure(i)){S.habits=S.habits.filter(x=>x.id!=i);save();R()}},
+tick:(d,i)=>{S.hl[d+i]=!S.hl[d+i];xp(S.hl[d+i]?5:-5);save();R()},note:()=>{S.notes[td()]=v('nt');save()},
+pic:i=>{const f=i.files[0];if(!f)return;const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=96;const s=Math.min(im.width,im.height);c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,96,96);fimg=c.toDataURL('image/jpeg',.6)};im.src=URL.createObjectURL(f)},
+fadd:()=>{const n=v('fn').trim();if(!n)return;const x={id:id(),d:fd,n,mt:v('fmt'),tm:v('ftm'),k:+v('fk')||0,p:+v('fp')||0,c:+v('fc')||0,f:+v('ff')||0,img:fimg};S.food.push(x);if($('#fsv').checked)savefav(x);fimg='';xp(3);save();R()},
+fdel:i=>{S.food=S.food.filter(x=>x.id!=i);save();R()},fav:i=>{savefav(S.food.find(x=>x.id==i));save();R()},
+fuse:i=>{const x=S.favs.find(y=>y.id==i);S.food.push({...x,id:id(),d:fd,mt:v('fmt'),tm:v('ftm')});xp(3);save();R()},fvdel:i=>{S.favs=S.favs.filter(x=>x.id!=i);save();R()},
+fw:n=>{fd=td(new Date(+new Date(fd+'T12:00:00')+n*864e5));R()},fm:n=>{const x=new Date(fd+'T12:00:00');x.setDate(1);x.setMonth(x.getMonth()+n);fd=td(x);R()},
+goal:()=>{const k=+v('gk'),p=+v('gp'),c=+v('gc'),f=+v('gf');if(k>0&&p>0&&c>0&&f>0){S.goals={k,p,c,f,w:+v('gw')||8};save();R()}},
+bf:(k,x)=>{pgs()[pg].f[k]=x;save()},bmood:m=>{const p=pgs()[pg];p.f.mood=p.f.mood===m?null:m;save();R()},brate:n=>{const p=pgs()[pg];p.f.rate=p.f.rate===n?null:n;save();R()},
+bdate:x=>{pgs()[pg].d=x||td();srt();save();R()},bgo:i=>{pg=i;lst=0;fl=1;R()},
+bp:k=>{const B=pgs();if(k==2){B.push({d:td(),f:{}});xp(5);pg=B.length-1;srt();fl=1}else if(k<0){pg=Math.max(0,pg-1);fl=2}else{pg=Math.min(B.length-1,pg+1);fl=1}save();R()},
+madd:()=>{const a=+v('ma');if(!a)return;S.money.push({id:id(),t:v('mt'),a:Math.abs(a),cat:v('mcat'),c:v('mc'),d:v('md')||td()});xp(2);save();R()},
+mdel:i=>{S.money=S.money.filter(x=>x.id!=i);save();R()},mnav:n=>{const a=new Date(ma0+'T12:00:00');if(mr=='y')a.setFullYear(a.getFullYear()+n);else if(mr=='m'){a.setDate(1);a.setMonth(a.getMonth()+n)}else a.setDate(a.getDate()+7*n);ma0=td(a);R()},mbud:(c,x)=>{S.bud[c]=+x||0;save();R()},
+ytq:k=>{const q=v(k=='v'?'vq':'rq').trim(),h=k=='v'?'https://www.youtube.com':'https://music.youtube.com';yt(q?(k=='v'?h+'/results?search_query=':h+'/search?q=')+encodeURIComponent(q):h)},
+ytn:i=>yt('https://www.youtube.com/results?search_query='+encodeURIComponent(S.tv.find(x=>x.id==i).n)),
+tadd:()=>{const n=v('tn').trim();if(!n)return;const t={id:id(),n,dl:'',pl:'',rp:'none',ef:2,im:3,ur:1,no:''};S.tasks.push(t);tx=t.id;save();R()},tx:i=>{tx=tx==i?null:i;R();setTimeout(()=>document.querySelector('.tc.wide')?.scrollIntoView({block:'nearest'}),50)},tf:k=>{tf=k;R()},tset:(i,f,x)=>{if(f=='n'&&!x.trim())return;S.tasks.find(t=>t.id==i)[f]=x;save();R()},
+tdone:i=>{const t=S.tasks.find(x=>x.id==i),pt=10+t.ef*5;S.pts+=pt;xp(pt);S.tdn[td()]=(S.tdn[td()]||0)+1;if(t.rp&&t.rp!='none'){const adv=x=>{const d=new Date((x&&x>td()?x:td())+'T12:00:00');if(t.rp=='daily')d.setDate(d.getDate()+1);else if(t.rp=='weekly')d.setDate(d.getDate()+7);else d.setMonth(d.getMonth()+1);return td(d)};if(t.dl)t.dl=adv(t.dl);t.pl=adv(t.pl)}else S.tasks=S.tasks.filter(x=>x.id!=i);save();R()},
+tdel:i=>{if(sure(i)){S.tasks=S.tasks.filter(x=>x.id!=i);save();R()}},
+radd:()=>{if(v('rn')&&+v('rc')>0){S.rewards.push({id:id(),n:v('rn'),c:+v('rc')});save();R()}},
+rclaim:i=>{const r=S.rewards.find(x=>x.id==i);if(S.pts<r.c)return alert('Not enough points yet. Keep going!');S.pts-=r.c;S.claimed++;S.rewards=S.rewards.filter(x=>x.id!=i);save();R()},
+arr:()=>{arr=!arr;document.body.classList.toggle('arr',arr);$('#ab').hidden=!arr;if(arr){A.close();const ab=$('#ab'),p=dockPos||[Math.max(0,(innerWidth-ab.offsetWidth)/2),Math.max(0,innerHeight-ab.offsetHeight-14)];ab.style.left=p[0]+'px';ab.style.top=p[1]+'px'}else{const sz=$('#sz');if(sz)sz.hidden=true;selK=null}},
+tpip:async()=>{try{if(!pc){pc=document.createElement('canvas');pc.width=320;pc.height=180;pv=document.createElement('video');pv.muted=true;pv.playsInline=true;pv.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none';document.body.appendChild(pv);pv.srcObject=pc.captureStream(5)}drawT();await pv.play();if(pv.requestPictureInPicture)await pv.requestPictureInPicture();else if(pv.webkitSetPresentationMode)pv.webkitSetPresentationMode('picture-in-picture');else throw 0}catch(e){alert('Floating timer is not supported in this browser. Try Chrome or Safari on a recent device.')}},
+pset:(k,x)=>{(S.plan[cd]=S.plan[cd]||{})[k]=x;save()},ps:(h,x)=>{const P=(S.plan[cd]=S.plan[cd]||{});(P.s=P.s||{})[h]=x;save()},
+pl:(k,i,f,x)=>{const P=(S.plan[cd]=S.plan[cd]||{});P[k]=P[k]||[{},{},{},{}];P[k][i][f]=x;save()},
+bwx:i=>{const p=pgs()[pg];p.f.wx=p.f.wx===i?null:i;save();R()},
+wset:n=>{const c=S.water[fd]||0;S.water[fd]=Math.max(0,c==n?n-1:n);if(S.water[fd]>c)xp(1);save();R()},
+mf:(k,x)=>{(S.mj[md]=S.mj[md]||{})[k]=x;save()},mtog:k=>{const f=(S.mj[md]=S.mj[md]||{});f[k]=!f[k];if(f[k])xp(3);save();R()},
+mmood:n=>{const f=(S.mj[md]=S.mj[md]||{});f.moods=f.moods||[];const i=f.moods.indexOf(n);i<0?f.moods.push(n):f.moods.splice(i,1);save();R()},
+mrate:n=>{const f=(S.mj[md]=S.mj[md]||{});f.rate=f.rate===n?null:n;save();R()},mshuf:k=>{const f=(S.mj[md]=S.mj[md]||{});f[k]=(f[k]||0)+1;save();R()},
+mday:n=>{md=dayoff(md,n);R()},mset:x=>{md=x||td();R()},aadd:()=>{const a=v('afn').trim();if(a){S.affs.push(a);save();R()}},adel:i=>{S.affs.splice(i,1);save();R()},
+vgadd:()=>{const n=v('vgn').trim();if(n){S.vg.push({id:id(),n,d:v('vgd'),p:0,w:''});xp(2);save();R()}},vgdel:i=>{if(sure(i)){S.vg=S.vg.filter(g=>g.id!=i);save();R()}},
+vgset:(i,k,x)=>{S.vg.find(g=>g.id==i)[k]=x;save();if(k=='p')R()},
+wadd:()=>{const t=v('wnt').trim();if(t){S.wins.push({id:id(),d:td(),t});xp(5);save();R()}},wdel:i=>{S.wins=S.wins.filter(w=>w.id!=i);save();R()},
+wfrom:()=>{const t=((S.mj[md]||{}).win||'').trim();if(t&&!S.wins.some(w=>w.t==t&&w.d==md)){S.wins.push({id:id(),d:md,t});xp(5);save();R()}},
+tnew:()=>{const t={id:id(),n:'New task',dl:'',pl:'',rp:'none',ef:2,im:3,ur:1,no:''};S.tasks.push(t);tx=t.id;tf='all';save();R();setTimeout(()=>{const e=$('#tni');if(e){e.focus();e.select()}},60)},
+resize:(dw,dh)=>{if(!selK)return alert('Tap a furniture first.');const[sx,sy]=S.size[selK]||[1,1],cl=x=>Math.max(.4,Math.min(2.5,+x.toFixed(2)));let nx=cl(sx+dw),ny=cl(sy+dh);if(lockAspect){if(dw)ny=cl(sy*(nx/sx));else if(dh)nx=cl(sx*(ny/sy))}S.size[selK]=[nx,ny];applyPos();save()},
+rsize:()=>{if(!selK)return alert('Tap a furniture first.');S.size[selK]=[1,1];applyPos();save()},
+lockToggle:()=>{lockAspect=!lockAspect;updateLock()},
+moveL:(dx,dy)=>{if(!selK)return alert('Tap a furniture first.');const p=S.labelPos[selK]||[0,0];S.labelPos[selK]=[p[0]+dx,p[1]+dy];applyPos();save()},
+fontL:d=>{if(!selK)return alert('Tap a furniture first.');const f=S.labelFont[selK]||{s:17,f:'Dancing Script'};f.s=Math.max(9,Math.min(40,f.s+d));S.labelFont[selK]=f;applyPos();save()},
+fontF:f=>{if(!selK)return alert('Tap a furniture first.');const o=S.labelFont[selK]||{s:17};S.labelFont[selK]={...o,f};applyPos();save()},
+resetL:()=>{if(!selK)return alert('Tap a furniture first.');delete S.labelPos[selK];delete S.labelFont[selK];delete S.labelHide[selK];applyPos();updateHide();save()},
+hideL:()=>{if(!selK)return alert('Tap a furniture first.');S.labelHide[selK]=!S.labelHide[selK];applyPos();updateHide();save()},
+rlay:()=>{S.pos={};save();applyPos()},pname:x=>{S.prof.name=x.trim();save()},logout:async()=>{try{await fb.a.signOut(fb.auth)}catch{}uid=null;acct='';R()},
+ppic:i=>{const f=i.files[0];if(!f)return;const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=96;const q=Math.min(im.width,im.height);c.getContext('2d').drawImage(im,(im.width-q)/2,(im.height-q)/2,q,q,0,0,96,96);S.prof.img=c.toDataURL('image/jpeg',.7);save();R()};im.src=URL.createObjectURL(f)},
+inst:async()=>{if(dip){dip.prompt()}else alert('On iPhone/iPad: tap Share, then Add to Home Screen. On Android: open the browser menu and tap Install app.')},
+tmode:k=>{clearInterval(T.iv);T.run=0;T.m=k;T.left=dur[k];R()},trs:()=>{clearInterval(T.iv);T.run=0;T.left=dur[T.m];R()},
+tgo:()=>{if(T.run){clearInterval(T.iv);T.run=0;T.left=Math.ceil((T.end-Date.now())/1000)}else{T.end=Date.now()+T.left*1000;T.run=1;T.iv=setInterval(tick2,500)}R()},
+vadd:()=>{const n=v('vn').trim();if(n){S.tv.push({id:id(),n,k:v('vk'),s:0});save();R()}},
+vnext:i=>{const x=S.tv.find(y=>y.id==i);x.s=(x.s+1)%3;if(x.s==2)xp(5);save();R()},vdel:i=>{S.tv=S.tv.filter(x=>x.id!=i);save();R()},
+oadd:()=>{const n=v('rdn').trim();let u=v('rdu').trim();if(!n||!u)return;if(!/^https?:\/\//i.test(u))u='https://'+u;S.radio.push({id:id(),n,u});save();R()},
+odel:i=>{S.radio=S.radio.filter(x=>x.id!=i);save();R()},
+rdel:i=>{S.rewards=S.rewards.filter(x=>x.id!=i);save();R()}};
+document.querySelectorAll('.f').forEach(g=>g.onkeydown=e=>e.key=='Enter'&&g.onclick());
+// ---------- Firebase sync (loads only when configured; app works locally without it)
+(async()=>{if(!FB.apiKey)return;try{const u='https://www.gstatic.com/firebasejs/10.12.2/firebase-',[a,p,s]=await Promise.all(['app','auth','firestore'].map(m=>import(u+m+'.js'))),app=a.initializeApp(FB);
+fb={a:p,s,auth:p.getAuth(app),db:s.getFirestore(app)};
+p.onAuthStateChanged(fb.auth,us=>{uid=us?.uid;acct=us?.email||'';if(curF==vSet)R();if(uid)s.onSnapshot(s.doc(fb.db,'users',uid),d=>{const r=d.data();if(!r)return push();if(r.t>S.t){S={...D,...r};localStorage[KEY]=JSON.stringify(S);applyPos();badge();if(!document.activeElement.matches('input,textarea'))R()}})})}catch(e){console.log(e)}})();
+// ---------- optional background image for the room and the page (dimmed; default if missing)
+(function(){
+  const candidates=['asset/bg.jpg','assets/bg.png','assets/background.jpg'];
+  const apply=src=>{
+    document.body.style.setProperty('--bg','url("'+src+'")');
+    const room=document.createElementNS('http://www.w3.org/2000/svg','image');
+    room.setAttribute('x','0');room.setAttribute('y','0');
+    room.setAttribute('width','400');room.setAttribute('height','600');
+    room.setAttribute('preserveAspectRatio','xMidYMid slice');
+    room.setAttribute('pointer-events','none');
+    room.setAttribute('href',src);
+    const floor=[...sv.querySelectorAll('rect')].find(r=>r.getAttribute('y')=='350');
+    if(floor)floor.after(room);else sv.prepend(room);
+  };
+  const tryNext=i=>{if(i>=candidates.length)return;const im=new Image();im.onload=()=>apply(candidates[i]);im.onerror=()=>tryNext(i+1);im.src=candidates[i]};
+  tryNext(0);
+})();
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+</script>
+<div id="ab" class="ab" hidden>
+<div id="dockhead">🛋 Arrange <small>drag to move</small></div>
+<div id="sz" hidden>
+<div class="szh">Editing: <span id="szn"></span></div>
+<div>W <button class=s onclick="A.resize(-.1,0)" aria-label="Narrower">−</button><button class=s onclick="A.resize(.1,0)" aria-label="Wider">＋</button> H <button class=s onclick="A.resize(0,-.1)" aria-label="Shorter">−</button><button class=s onclick="A.resize(0,.1)" aria-label="Taller">＋</button> <button id=lk class=s onclick="A.lockToggle()">🔗 Free</button> <button class=s onclick="A.rsize()">1:1</button></div>
+<div>Label <button class=s onclick="A.moveL(-4,0)" aria-label="Label left">←</button><button class=s onclick="A.moveL(4,0)" aria-label="Label right">→</button><button class=s onclick="A.moveL(0,-4)" aria-label="Label up">↑</button><button class=s onclick="A.moveL(0,4)" aria-label="Label down">↓</button> <button class=s onclick="A.fontL(-2)" aria-label="Smaller font">A−</button><button class=s onclick="A.fontL(2)" aria-label="Bigger font">A＋</button> <select id=lf onchange="A.fontF(this.value)"><option>Dancing Script</option><option>Mali</option><option>Quicksand</option><option>Georgia</option><option>Arial</option></select> <button id=lh class=s onclick="A.hideL()">👁 Visible</button> <button class=s onclick="A.resetL()">↺ label</button></div>
+</div>
+<div id="dockbar"><button onclick="A.arr()">✅ Done arranging</button><button class="s" onclick="A.rlay()">↺ Reset</button></div></div>
+<div id="m" hidden onclick="event.target.id=='m'&&A.close()"><div class="sheet" role="dialog" aria-labelledby="ti"><div><h3 id="ti"></h3><button class="s" onclick="A.close()" aria-label="Close">✕</button></div><div id="bd"></div></div></div>
+</body></html>
