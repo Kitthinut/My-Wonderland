@@ -22,6 +22,7 @@
         --r: #a8203a;
         --c: #fff3e0;
         --g: #d9a93b;
+        --ok: #3a7d55;
         --k: #2b1a22;
         --p: #f6d5d9;
       }
@@ -425,6 +426,10 @@
         background: #fff;
         color: var(--r);
         flex: none;
+      }
+      button.done {
+        background: var(--ok);
+        border-color: var(--ok);
       }
       .tags {
         display: flex;
@@ -2326,7 +2331,7 @@
           `<div class=ed><label class=fl>Task</label><input id=tni value="${esc(t.n)}" onchange="A.tset('${t.id}','n',this.value)"><div class=row><label class=fl style="flex:1">Plan to do<input type=date value="${t.pl || ""}" onchange="A.tset('${t.id}','pl',this.value)"></label><label class=fl style="flex:1">Deadline<input type=date value="${t.dl || ""}" onchange="A.tset('${t.id}','dl',this.value)"></label></div><div class=row><label class=fl style="flex:1">Repeat<select onchange="A.tset('${t.id}','rp',this.value)">${RP.map((r) => `<option value=${r} ${(t.rp || "none") == r ? "selected" : ""}>${RL[r]}</option>`).join("")}</select></label><label class=fl style="flex:1">Effort${sl(t.id, "ef", t.ef)}</label><label class=fl style="flex:1">Importance${sl(t.id, "im", t.im)}</label></div><small>Urgency is automatic: <b>${eu(t)}/5</b>, from the days left until the plan date or deadline.</small><label class=fl>Notes</label><textarea rows=3 onchange="A.tset('${t.id}','no',this.value)">${esc(t.no)}</textarea><button onclick="A.tx('${t.id}')">Done editing</button></div>`,
         tcard = (t) => {
           const q = qd(t);
-          return `<div class="tc ${tx == t.id ? "wide" : ""}" style="border-top-color:${QC[q]}"><div class=task-head><button class=ck onclick="A.tdone('${t.id}')" aria-label="Complete task">○</button><b class=tt onclick="A.tx('${t.id}')">${esc(t.n)}</b></div><div class=task-actions><button class=s onclick="A.tx('${t.id}')" aria-label="Edit">${tx == t.id ? "✔" : "✎"}</button><button class=s onclick="A.tdel('${t.id}')" aria-label="Delete">${dc == t.id ? "Delete?" : "✕"}</button></div><div class=tags><em style="background:${QC[q]}22;color:${QC[q]}">${QS[q]}</em>${dch(t.pl, "Do")}${dch(t.dl, "Due")}${t.rp && t.rp != "none" ? "<em>🔁 " + t.rp + "</em>" : ""}<em>+${10 + t.ef * 5} pts</em></div>${t.no ? `<small>📝 ${esc(t.no)}</small>` : ""}${tx == t.id ? ted(t) : ""}</div>`;
+          return `<div class="tc ${tx == t.id ? "wide" : ""}" style="border-top-color:${QC[q]}"><div class=task-head><button class=ck onclick="A.tdone('${t.id}')" aria-label="Complete task">○</button><b class=tt onclick="A.tx('${t.id}')">${esc(t.n)}</b></div><div class=task-actions><button class="s done" onclick="A.tdone('${t.id}')" aria-label="Mark task done">✓ Done</button><button class=s onclick="A.tx('${t.id}')" aria-label="Edit">${tx == t.id ? "✔" : "✎"}</button><button class=s onclick="A.tdel('${t.id}')" aria-label="Delete">${dc == t.id ? "Delete?" : "✕"}</button></div><div class=tags><em style="background:${QC[q]}22;color:${QC[q]}">${QS[q]}</em>${dch(t.pl, "Do")}${dch(t.dl, "Due")}${t.rp && t.rp != "none" ? "<em>🔁 " + t.rp + "</em>" : ""}<em>+${10 + t.ef * 5} pts</em></div>${t.no ? `<small>📝 ${esc(t.no)}</small>` : ""}${tx == t.id ? ted(t) : ""}</div>`;
         },
         vTask = () => {
           const all = [...S.tasks].sort(
