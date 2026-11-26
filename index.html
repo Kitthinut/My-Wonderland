@@ -430,6 +430,12 @@
       button.done {
         background: var(--ok);
         border-color: var(--ok);
+        color: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        button.done {
+          color: #000;
+        }
       }
       .tags {
         display: flex;
