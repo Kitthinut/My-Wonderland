@@ -1743,6 +1743,7 @@
         money: [],
         books: { j: [], m: [] },
         tasks: [],
+        doneTasks: [],
         rewards: [],
         pts: 0,
         claimed: 0,
@@ -2315,7 +2316,12 @@
             u = eu(t) >= 3;
           return i && u ? 0 : i ? 1 : u ? 2 : 3;
         },
-        sc = (t) => t.im * 3 + eu(t) * 3 - t.ef;
+        sc = (t) => t.im * 3 + eu(t) * 3 - t.ef,
+        recentDone = () =>
+          (S.doneTasks || []).filter((x) => {
+            const age = Date.now() - x.completedAt;
+            return age >= 0 && age <= 10 * 864e5;
+          });
       let tf = "all",
         tx = null;
       const QC = ["#c8102e", "#d9a93b", "#4b8bb3", "#9a8a8f"],
@@ -2339,15 +2345,19 @@
           const q = qd(t);
           return `<div class="tc ${tx == t.id ? "wide" : ""}" style="border-top-color:${QC[q]}"><div class=task-head><button class=ck onclick="A.tdone('${t.id}')" aria-label="Complete task">○</button><b class=tt onclick="A.tx('${t.id}')">${esc(t.n)}</b></div><div class=task-actions><button class="s done" onclick="A.tdone('${t.id}')" aria-label="Mark task done">✓ Done</button><button class=s onclick="A.tx('${t.id}')" aria-label="Edit">${tx == t.id ? "✔" : "✎"}</button><button class=s onclick="A.tdel('${t.id}')" aria-label="Delete">${dc == t.id ? "Delete?" : "✕"}</button></div><div class=tags><em style="background:${QC[q]}22;color:${QC[q]}">${QS[q]}</em>${dch(t.pl, "Do")}${dch(t.dl, "Due")}${t.rp && t.rp != "none" ? "<em>🔁 " + t.rp + "</em>" : ""}<em>+${10 + t.ef * 5} pts</em></div>${t.no ? `<small>📝 ${esc(t.no)}</small>` : ""}${tx == t.id ? ted(t) : ""}</div>`;
         },
+        doneCard = (x) =>
+          `<div class=tc style="border-top-color:var(--ok)"><b>${esc(x.task.n)}</b><small>Done ${esc(x.completedDate)}</small><button class=s onclick="A.tundo('${x.cid}')">↶ Undo</button></div>`,
         vTask = () => {
           const all = [...S.tasks].sort(
               (a, b) => qd(a) - qd(b) || sc(b) - sc(a),
             ),
             n = (k) => all.filter((t) => qd(t) == k).length,
+            done = recentDone().sort((a, b) => b.completedAt - a.completedAt),
             L = tf == "all" ? all : all.filter((t) => qd(t) == +tf);
           const T = [
             ["all", `All (${all.length})`],
             ...QS.map((q, k) => ["" + k, `${q} (${n(k)})`]),
+            ["done", `✓ Done (${done.length})`],
             ["r", "🎁 Rewards"],
           ];
           return (
@@ -2362,8 +2372,11 @@
                   .join("") +
                 `</div>` +
                 (S.rewards.length ? "" : "<p>Add a treat you want to earn.</p>")
-              : `<div class=row><input id=tn placeholder="Quick add, then press Enter" onkeydown="event.key=='Enter'&&A.tadd()"><button onclick="A.tnew()">＋ New</button></div><div class=gal>${L.map(tcard).join("")}</div>` +
-                (L.length ? "" : "<p>Nothing here yet. Tap ＋ New.</p>"))
+              : tf == "done"
+                ? `<div class=gal>${done.map(doneCard).join("")}</div>` +
+                  (done.length ? "" : "<p>No tasks completed in the last 10 days.</p>")
+                : `<div class=row><input id=tn placeholder="Quick add, then press Enter" onkeydown="event.key=='Enter'&&A.tadd()"><button onclick="A.tnew()">＋ New</button></div><div class=gal>${L.map(tcard).join("")}</div>` +
+                  (L.length ? "" : "<p>Nothing here yet. Tap ＋ New.</p>"))
           );
         };
       // ---------- timer / tv / radio
@@ -3118,10 +3131,20 @@
         },
         tdone: (i) => {
           const t = S.tasks.find((x) => x.id == i),
-            pt = 10 + t.ef * 5;
+            pt = 10 + t.ef * 5,
+            completedAt = Date.now(),
+            completedDate = td();
+          S.doneTasks = recentDone();
+          S.doneTasks.push({
+            cid: id(),
+            task: { ...t },
+            completedAt,
+            completedDate,
+            points: pt,
+          });
           S.pts += pt;
           xp(pt);
-          S.tdn[td()] = (S.tdn[td()] || 0) + 1;
+          S.tdn[completedDate] = (S.tdn[completedDate] || 0) + 1;
           if (t.rp && t.rp != "none") {
             const adv = (x) => {
               const d = new Date((x && x > td() ? x : td()) + "T12:00:00");
@@ -3133,6 +3156,23 @@
             if (t.dl) t.dl = adv(t.dl);
             t.pl = adv(t.pl);
           } else S.tasks = S.tasks.filter((x) => x.id != i);
+          save();
+          R();
+        },
+        tundo: (i) => {
+          const x = (S.doneTasks || []).find((d) => d.cid == i);
+          if (!x) return;
+          const task = S.tasks.find((t) => t.id == x.task.id);
+          if (task) Object.assign(task, x.task);
+          else S.tasks.push({ ...x.task });
+          S.doneTasks = S.doneTasks.filter((d) => d.cid != i);
+          S.pts = Math.max(0, S.pts - x.points);
+          xp(-x.points);
+          const count = (S.tdn[x.completedDate] || 0) - 1;
+          if (count > 0) S.tdn[x.completedDate] = count;
+          else delete S.tdn[x.completedDate];
+          tx = null;
+          tf = "all";
           save();
           R();
         },
